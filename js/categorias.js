@@ -39,7 +39,8 @@ export const CATEGORIAS = [
   {
     nome: "Cânticos de Davi",
     cor: "#7B3900",
-    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l2.4 6.2L21 11l-5.5 4 1.8 6.5L12 17.8 6.7 21.5l1.8-6.5L3 11l6.6-1.8Z"/></svg>`,
+    // Coroa (Davi rei), não estrela — a estrela fica reservada pra Favoritos.
+    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4 18l-1-9 5 4 4-6 4 6 5-4-1 9"/></svg>`,
   },
   {
     nome: "Outros",
@@ -50,3 +51,16 @@ export const CATEGORIAS = [
 
 export const COR_CATEGORIA_PADRAO = "#833700";
 export const MOTIVO_PADRAO = CATEGORIAS[CATEGORIAS.length - 1].motivo;
+
+// Estrela — usada só pra favoritos (na aba de navegação e no botão de
+// favoritar de cada card), nunca como motivo decorativo de categoria.
+export const ICONE_ESTRELA = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l2.4 6.2L21 11l-5.5 4 1.8 6.5L12 17.8 6.7 21.5l1.8-6.5L3 11l6.6-1.8Z"/></svg>`;
+
+// Favoritos não é uma categoria real do banco — é um filtro do lado do
+// cliente (localStorage) que sempre aparece primeiro na navegação,
+// independente de quais categorias reais tiverem hino.
+export const FAVORITOS = {
+  nome: "Favoritos",
+  cor: "#EF6400",
+  icone: ICONE_ESTRELA,
+};

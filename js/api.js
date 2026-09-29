@@ -11,5 +11,5 @@ export async function listarHinos({ naipe, categoria, busca } = {}) {
     throw new Error(`Falha ao buscar hinos (status ${res.status})`);
   }
   const data = await res.json();
-  return data.items ?? [];
+  return Array.isArray(data) ? data : (data.items ?? []);
 }
