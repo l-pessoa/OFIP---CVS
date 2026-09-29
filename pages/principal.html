@@ -3,44 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Página principal (placeholder) — OFIP &amp; CVS</title>
+  <title>Catálogo de Hinos — OFIP &amp; CVS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Aladin&family=Abhaya+Libre:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/base.css" />
-  <style>
-    .placeholder-box {
-      margin-top: 40px;
-      padding: 20px;
-      background: var(--surface);
-      border-radius: 16px;
-    }
-    .placeholder-box p.note {
-      color: var(--text-secondary);
-      font-size: 13px;
-    }
-  </style>
+  <link rel="stylesheet" href="../css/catalogo.css" />
 </head>
 <body>
-  <div class="container">
-    <h1 id="saudacao">Carregando...</h1>
-    <div class="placeholder-box">
-      <p class="note">
-        Esta é uma tela provisória só pra confirmar que o login está salvando os dados certos.
-        A página principal de verdade (abas, busca, lista de hinos vindo do Xano) ainda vai ser construída.
-      </p>
+  <header class="catalogo-header">
+    <div class="catalogo-header-top">
+      <img class="catalogo-logo" src="../assets/logo/logo-combinado.png" alt="Coral Vozes de Sião / Orquestra Filarmônica Petrus" />
+      <p class="catalogo-usuario" id="usuario-info"></p>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Alternar tema claro/escuro">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
     </div>
-  </div>
+    <div class="catalogo-pauta">
+      <div class="pauta-linhas" aria-hidden="true"></div>
+      <div class="catalogo-busca">
+        <label for="busca" class="sr-only">Buscar por nome ou número da Harpa</label>
+        <input type="search" id="busca" placeholder="Buscar por nome ou número da Harpa..." autocomplete="off" />
+      </div>
+    </div>
+  </header>
 
-  <script type="module">
-    const raw = localStorage.getItem("ofipCvsUsuario");
-    const saudacao = document.getElementById("saudacao");
+  <nav class="categoria-nav" id="categoria-nav" aria-label="Categorias de hinos"></nav>
 
-    if (!raw) {
-      window.location.href = "../index.html";
-    } else {
-      const { nome, departamento, naipe } = JSON.parse(raw);
-      const grupo = departamento === "orquestra" ? "Orquestra Petrus" : "Coral Vozes de Sião";
-      saudacao.textContent = `Bem-vindo, ${nome} — ${naipe} (${grupo})`;
-    }
-  </script>
+  <main class="hino-lista" id="hino-lista">
+    <p class="carregando" id="carregando">Carregando hinos...</p>
+  </main>
+
+  <script type="module" src="../js/catalogo.js"></script>
 </body>
 </html>

@@ -42,3 +42,33 @@ input, select {
   font-family: inherit;
   font-size: 16px;
 }
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--field-bg);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-dark);
+}
+
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
