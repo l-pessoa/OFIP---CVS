@@ -1,5 +1,5 @@
 import { listarHinos } from "./api.js";
-import { CATEGORIAS, COR_CATEGORIA_PADRAO } from "./categorias.js";
+import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO } from "./categorias.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -27,6 +27,11 @@ function initTheme() {
 function corDaCategoria(nome) {
   const encontrada = CATEGORIAS.find((c) => c.nome === nome);
   return encontrada ? encontrada.cor : COR_CATEGORIA_PADRAO;
+}
+
+function motivoDaCategoria(nome) {
+  const encontrada = CATEGORIAS.find((c) => c.nome === nome);
+  return encontrada ? encontrada.motivo : MOTIVO_PADRAO;
 }
 
 function agruparPorCategoria(hinos) {
@@ -69,6 +74,7 @@ function renderCard(hino, naipeDoUsuario) {
   article.style.setProperty("--spine-cor", cor);
 
   article.innerHTML = `
+    <div class="hino-card-motivo" aria-hidden="true">${motivoDaCategoria(hino.hino_categoria)}</div>
     <button type="button" class="hino-card-toggle" aria-expanded="false">
       <span class="hino-titulo">${hino.hino_titulo}</span>
       ${hino.hino_numero_harpa ? `<span class="hino-numero">${hino.hino_numero_harpa}</span>` : ""}

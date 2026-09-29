@@ -123,11 +123,29 @@
 }
 
 .hino-card {
+  position: relative;
+  overflow: hidden;
   background: var(--surface);
   border-left: 6px solid var(--spine-cor, var(--accent));
   border-radius: 10px;
   padding: 14px 16px;
   margin-bottom: 12px;
+}
+
+.hino-card-motivo {
+  position: absolute;
+  z-index: -1;
+  right: -6px;
+  bottom: -12px;
+  width: 84px;
+  height: 84px;
+  color: var(--text);
+  opacity: .28;
+}
+
+.hino-card-motivo svg {
+  width: 100%;
+  height: 100%;
 }
 
 .hino-card-toggle {
