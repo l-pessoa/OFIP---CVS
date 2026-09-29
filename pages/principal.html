@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Página principal (placeholder) — OFIP &amp; CVS</title>
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <style>
+    .placeholder-box {
+      margin-top: 40px;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 16px;
+    }
+    .placeholder-box p.note {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="saudacao">Carregando...</h1>
+    <div class="placeholder-box">
+      <p class="note">
+        Esta é uma tela provisória só pra confirmar que o login está salvando os dados certos.
+        A página principal de verdade (abas, busca, lista de hinos vindo do Xano) ainda vai ser construída.
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    const raw = localStorage.getItem("ofipCvsUsuario");
+    const saudacao = document.getElementById("saudacao");
+
+    if (!raw) {
+      window.location.href = "../index.html";
+    } else {
+      const { nome, departamento, naipe } = JSON.parse(raw);
+      const grupo = departamento === "orquestra" ? "Orquestra Petrus" : "Coral Vozes de Sião";
+      saudacao.textContent = `Bem-vindo, ${nome} — ${naipe} (${grupo})`;
+    }
+  </script>
+</body>
+</html>

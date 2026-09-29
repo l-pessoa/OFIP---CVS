@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Coral Vozes de Sião / Orquestra Filarmônica Petrus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Aladin&family=Abhaya+Libre:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <div class="login-panel">
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Alternar tema claro/escuro">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+
+    <div class="logo-blob"></div>
+    <div class="login-blob"></div>
+
+    <form id="login-form">
+      <img class="login-logo" src="assets/logo/logo-combinado.png" alt="Coral Vozes de Sião / Orquestra Filarmônica Petrus" />
+      <h1 class="login-title">
+        <span aria-hidden="true">Bem-v<span class="note-i">♪</span>ndos</span>
+        <span class="sr-only">Bem-vindos</span>
+      </h1>
+      <p class="login-subtitle">Faça seu login</p>
+
+      <div class="field field-nome">
+        <label for="nome" class="sr-only">Nome</label>
+        <input type="text" id="nome" name="nome" placeholder="Nome" autocomplete="name" />
+        <span class="error" data-error-for="nome"></span>
+      </div>
+
+      <div class="field field-departamento">
+        <label for="departamento" class="sr-only">Departamento</label>
+        <select id="departamento" name="departamento">
+          <option value="">Selecione...</option>
+          <option value="orquestra">Orquestra</option>
+          <option value="coral">Coral</option>
+        </select>
+        <span class="error" data-error-for="departamento"></span>
+      </div>
+
+      <div class="field field-naipe">
+        <label for="naipe" class="sr-only">Naipe / instrumento</label>
+        <select id="naipe" name="naipe" disabled>
+          <option value="">Selecione o departamento primeiro</option>
+        </select>
+        <span class="error" data-error-for="naipe"></span>
+      </div>
+
+      <button type="submit" class="submit-btn">Entrar</button>
+    </form>
+  </div>
+
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>
