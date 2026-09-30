@@ -15,6 +15,53 @@
   width: auto;
 }
 
+.menu-wrap {
+  position: relative;
+}
+
+.menu-toggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: var(--surface);
+  padding: 0;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.menu-toggle svg {
+  width: 100%;
+  height: 100%;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 3;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 140px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .2);
+}
+
+.menu-item {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--text);
+  font-family: "Abhaya Libre", serif;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.menu-item:hover {
+  background: var(--field-bg);
+}
+
 .catalogo-usuario {
   flex: 1;
   margin: 0;

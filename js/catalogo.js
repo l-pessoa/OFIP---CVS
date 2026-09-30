@@ -25,6 +25,23 @@ function initTheme() {
   });
 }
 
+function initMenu() {
+  const toggle = document.getElementById("menu-toggle");
+  const dropdown = document.getElementById("menu-dropdown");
+
+  toggle.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    const aberto = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!aberto));
+    dropdown.hidden = aberto;
+  });
+
+  document.addEventListener("click", () => {
+    toggle.setAttribute("aria-expanded", "false");
+    dropdown.hidden = true;
+  });
+}
+
 function getFavoritoIds() {
   const raw = localStorage.getItem(FAVORITOS_KEY);
   if (!raw) return new Set();
@@ -181,6 +198,7 @@ async function init() {
   }
 
   initTheme();
+  initMenu();
   document.getElementById("usuario-info").textContent = `${usuario.nome} — ${usuario.naipe}`;
 
   const carregando = document.getElementById("carregando");
