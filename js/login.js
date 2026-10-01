@@ -35,6 +35,17 @@ function populateNaipe(departamento) {
   }
 }
 
+function jaTemSessao() {
+  const salvo = localStorage.getItem(USER_KEY);
+  if (!salvo) return false;
+  try {
+    const usuario = JSON.parse(salvo);
+    return Boolean(usuario?.nome && usuario?.naipe);
+  } catch {
+    return false;
+  }
+}
+
 function showError(fieldId, message) {
   document.querySelector(`[data-error-for="${fieldId}"]`).textContent = message;
 }
@@ -77,5 +88,9 @@ function initForm() {
   });
 }
 
-initTheme();
-initForm();
+if (jaTemSessao()) {
+  window.location.href = "pages/principal.html";
+} else {
+  initTheme();
+  initForm();
+}

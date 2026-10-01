@@ -85,6 +85,14 @@
   cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
 }
 
+#audio_referencia {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
 .admin-btn {
   display: block;
   width: 100%;

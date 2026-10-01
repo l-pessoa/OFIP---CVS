@@ -1,4 +1,4 @@
-const API_BASE = "https://x8ki-letl-twmt.n7.xano.io/api:u6Bs9PZE";
+export const API_BASE = "https://x8ki-letl-twmt.n7.xano.io/api:u6Bs9PZE";
 
 export async function listarHinos({ naipe, categoria, busca } = {}) {
   const params = new URLSearchParams();

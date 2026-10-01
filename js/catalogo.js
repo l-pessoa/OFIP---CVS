@@ -1,4 +1,4 @@
-import { listarHinos } from "./api.js";
+import { listarHinos, API_BASE } from "./api.js";
 import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
 
 const USER_KEY = "ofipCvsUsuario";
@@ -39,6 +39,11 @@ function initMenu() {
   document.addEventListener("click", () => {
     toggle.setAttribute("aria-expanded", "false");
     dropdown.hidden = true;
+  });
+
+  document.getElementById("menu-sair").addEventListener("click", () => {
+    localStorage.removeItem(USER_KEY);
+    window.location.href = "../index.html";
   });
 }
 
@@ -84,8 +89,46 @@ function agruparPorCategoria(hinos) {
   return grupos;
 }
 
-function svgNota() {
-  return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="18" r="3"/><path d="M9 18V4l10-2v14"/><circle cx="16" cy="16" r="3"/></svg>';
+function svgFechar() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+}
+
+function idDoArquivoDrive(link) {
+  try {
+    return new URL(link).searchParams.get("id");
+  } catch {
+    return null;
+  }
+}
+
+function initVisualizador() {
+  const modal = document.createElement("div");
+  modal.className = "visualizador-modal";
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="visualizador-topo">
+      <span class="visualizador-titulo" id="visualizador-titulo"></span>
+      <button type="button" class="visualizador-fechar" aria-label="Fechar">${svgFechar()}</button>
+    </div>
+    <iframe class="visualizador-iframe" title="Partitura" allow="fullscreen"></iframe>
+  `;
+  document.body.appendChild(modal);
+
+  const iframe = modal.querySelector(".visualizador-iframe");
+  const titulo = modal.querySelector("#visualizador-titulo");
+
+  function fechar() {
+    modal.hidden = true;
+    iframe.src = "";
+  }
+
+  modal.querySelector(".visualizador-fechar").addEventListener("click", fechar);
+
+  return function abrir(idArquivo, tituloHino) {
+    titulo.textContent = tituloHino;
+    iframe.src = `https://drive.google.com/file/d/${idArquivo}/preview`;
+    modal.hidden = false;
+  };
 }
 
 function renderNaipeChips(hino, naipeDoUsuario) {
@@ -106,7 +149,7 @@ function renderNaipeChips(hino, naipeDoUsuario) {
   return chips + mais;
 }
 
-function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito) {
+function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador) {
   const cor = corDaCategoria(hino.hino_categoria);
   const ehFavorito = favoritoIds.has(hino.id);
   const article = document.createElement("article");
@@ -126,8 +169,8 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito) {
     </div>
     <div class="hino-naipes">${renderNaipeChips(hino, naipeDoUsuario)}</div>
     <div class="hino-detalhes" hidden>
-      ${hino.link_pdf ? `<a class="hino-link" href="${hino.link_pdf}" target="_blank" rel="noopener">Baixar PDF</a>` : ""}
-      ${hino.link_mp3 ? `<a class="hino-link hino-link-audio" href="${hino.link_mp3}" target="_blank" rel="noopener">${svgNota()} Ouvir referência</a>` : ""}
+      ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">Visualizar partitura</button>` : ""}
+      ${hino.link_mp3 ? `<audio class="hino-audio" controls preload="none" src="${API_BASE}/audio?id=${idDoArquivoDrive(hino.link_mp3)}"></audio>` : ""}
     </div>
   `;
 
@@ -142,6 +185,14 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito) {
   article.querySelector(".favorito-btn").addEventListener("click", () => {
     onToggleFavorito(hino.id);
   });
+
+  const btnVisualizar = article.querySelector(".hino-link-visualizar");
+  if (btnVisualizar) {
+    btnVisualizar.addEventListener("click", () => {
+      const idArquivo = idDoArquivoDrive(hino.link_pdf);
+      if (idArquivo) abrirVisualizador(idArquivo, hino.hino_titulo);
+    });
+  }
 
   return article;
 }
@@ -170,7 +221,7 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   }
 }
 
-function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito) {
+function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador) {
   const lista = document.getElementById("hino-lista");
   lista.innerHTML = "";
   if (hinos.length === 0) {
@@ -186,7 +237,7 @@ function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggl
     return;
   }
   for (const hino of hinos) {
-    lista.appendChild(renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito));
+    lista.appendChild(renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador));
   }
 }
 
@@ -199,6 +250,7 @@ async function init() {
 
   initTheme();
   initMenu();
+  const abrirVisualizador = initVisualizador();
   document.getElementById("usuario-info").textContent = `${usuario.nome} — ${usuario.naipe}`;
 
   const carregando = document.getElementById("carregando");
@@ -242,7 +294,7 @@ async function init() {
             String(h.hino_numero_harpa ?? "").includes(termoBusca)
         )
       : hinosDaCategoria;
-    renderLista(filtrados, usuario.naipe, categoriaAtiva, favoritoIds, onToggleFavorito);
+    renderLista(filtrados, usuario.naipe, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador);
   }
 
   document.getElementById("busca").addEventListener("input", atualizar);
