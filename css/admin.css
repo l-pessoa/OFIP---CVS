@@ -93,6 +93,93 @@
   cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
 }
 
+.admin-link-voltar {
+  display: inline-block;
+  margin-bottom: 14px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent-dark);
+  font-family: "Abhaya Libre", serif;
+  font-weight: 700;
+  font-size: 14px;
+  touch-action: manipulation;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.lista-hinos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.hino-admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--field-bg);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.hino-admin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hino-admin-titulo {
+  font-family: "Abhaya Libre", serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hino-admin-categoria {
+  font-family: "Abhaya Libre", serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.hino-admin-acoes {
+  flex: none;
+  display: flex;
+  gap: 8px;
+}
+
+.hino-admin-acoes button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: "Abhaya Libre", serif;
+  font-weight: 700;
+  font-size: 13px;
+  touch-action: manipulation;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.btn-editar {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+.btn-excluir {
+  background: var(--surface);
+  color: var(--erro);
+}
+
+.naipe-existe {
+  font-size: 10px;
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
 .admin-btn {
   display: block;
   width: 100%;

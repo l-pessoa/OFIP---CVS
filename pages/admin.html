@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin — OFIP &amp; CVS</title>
+  <title>Maestros — OFIP &amp; CVS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Aladin&family=Abhaya+Libre:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -36,9 +36,18 @@
       <p class="admin-erro" id="senha-erro" hidden>Senha incorreta.</p>
     </section>
 
+    <section id="tela-lista" class="admin-card" hidden>
+      <h1 class="admin-titulo">Hinos cadastrados</h1>
+      <button type="button" id="btn-novo-hino" class="admin-btn">+ Adicionar novo hino</button>
+      <p class="admin-status" id="lista-status"></p>
+      <div id="lista-hinos" class="lista-hinos"></div>
+    </section>
+
     <section id="tela-formulario" class="admin-card" hidden>
-      <h1 class="admin-titulo">Adicionar novo hino</h1>
+      <button type="button" id="btn-voltar-lista" class="admin-link-voltar">&larr; Voltar pra lista</button>
+      <h1 class="admin-titulo" id="form-titulo-secao">Adicionar novo hino</h1>
       <form id="form-hino">
+        <input type="hidden" id="hino_id" name="hino_id" />
         <label class="campo-label" for="titulo">Título</label>
         <input type="text" id="titulo" name="titulo" required />
 
@@ -53,6 +62,7 @@
 
         <label class="campo-label" for="audio_referencia">Áudio de referência (opcional)</label>
         <input type="file" id="audio_referencia" name="audio_referencia" accept="audio/*" />
+        <p class="admin-info" id="aviso-audio-existente" hidden>Já tem áudio — selecione um novo arquivo só se quiser substituir.</p>
 
         <h2 class="admin-subtitulo">Orquestra</h2>
         <div class="naipes-grid" id="naipes-orquestra"></div>
