@@ -176,10 +176,15 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
 
   const toggle = article.querySelector(".hino-card-toggle");
   const detalhes = article.querySelector(".hino-detalhes");
+  const audio = article.querySelector(".hino-audio");
   toggle.addEventListener("click", () => {
     const aberto = toggle.getAttribute("aria-expanded") === "true";
     toggle.setAttribute("aria-expanded", String(!aberto));
     detalhes.hidden = aberto;
+    if (!aberto && audio && audio.preload !== "auto") {
+      audio.preload = "auto";
+      audio.load();
+    }
   });
 
   article.querySelector(".favorito-btn").addEventListener("click", () => {
