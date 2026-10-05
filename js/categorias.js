@@ -18,8 +18,14 @@
 // jovens, crianças) são só identificação de público — não aparecem na UI,
 // o nome de exibição é sempre o nome real da categoria.
 
-const SILHUETA_MONTANHAS = `<path d="M2 21l5-6 4 5 4-5.5 4 5.5 3-4" vector-effect="non-scaling-stroke"/>`;
-const SILHUETA_PILARES = `<path d="M3 21V8l3-3 3 3v13M11 21V8l3-3 3 3v13M19 21V8l2-2" vector-effect="non-scaling-stroke"/>`;
+// As silhuetas usam um viewBox LARGO (200x24, não 24x24) porque elas
+// esticam pra cobrir a largura inteira da cena (preserveAspectRatio=none
+// no catalogo.js) — desenhar num quadrado e esticar pra uma faixa larga
+// deixava o traço bem distorcido/quebrado. Com o padrão repetindo dentro
+// de um viewBox já largo, a distorção fica mínima.
+const SILHUETA_MONTANHAS = `<path d="M0,22 L11,5 L23,22 L37,9 L52,22 L66,3 L80,22 L90,9 L102,22 L116,5 L127,22 L142,9 L156,22 L172,9 L185,22 L200,5 L200,22" vector-effect="non-scaling-stroke"/>`;
+const SILHUETA_PILARES = `<path d="M0,22V11L7,6L14,11V22 M26,22V11L33,6L40,11V22 M52,22V11L59,6L66,11V22 M78,22V11L85,6L92,11V22 M104,22V11L111,6L118,11V22 M130,22V11L137,6L144,11V22 M156,22V11L163,6L170,11V22 M182,22V11L189,6L196,11V22" vector-effect="non-scaling-stroke"/>`;
+const SILHUETA_ONDA = `<path d="M0,14 Q6,6 12,14 Q18,20 24,14 Q30,6 36,14 Q42,20 48,14 Q54,6 60,14 Q66,20 72,14 Q78,6 84,14 Q90,20 96,14 Q102,6 108,14 Q114,20 120,14 Q126,6 132,14 Q138,20 144,14 Q150,6 156,14 Q162,20 168,14 Q174,6 180,14 Q186,20 192,14 Q198,6 204,14" vector-effect="non-scaling-stroke"/>`;
 
 export const CATEGORIAS = [
   {
@@ -39,7 +45,7 @@ export const CATEGORIAS = [
     nome: "Coral Vozes de Sião",
     cor: "#9C4100",
     corCena: "#4A2510",
-    silhueta: `<path d="M2 17c2-4 3-4 4 0s3 4 4 0 3-4 4 0 3-4 4 0 3-4 4 0" vector-effect="non-scaling-stroke"/>`,
+    silhueta: SILHUETA_ONDA,
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/></svg>`,
   },
   {
