@@ -13,8 +13,15 @@
 }
 
 .catalogo-header {
+  position: relative;
   background: var(--login-gradient);
   padding: 12px 20px 20px;
+  transition: background-color .2s ease, padding .2s ease;
+}
+
+.catalogo-header.tem-cena {
+  background: none;
+  padding: 0;
 }
 
 .catalogo-header-top {
@@ -26,6 +33,13 @@
 
 .catalogo-header-top[hidden] {
   display: none;
+}
+
+.catalogo-header > .theme-toggle {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 2;
 }
 
 .catalogo-logo {

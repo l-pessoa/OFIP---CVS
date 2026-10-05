@@ -569,6 +569,7 @@ async function init() {
     }
 
     document.querySelector(".catalogo-header-top").hidden = !!cena;
+    document.querySelector(".catalogo-header").classList.toggle("tem-cena", !!cena);
 
     const favoritoIds = getFavoritoIds();
     const onToggleFavorito = (id) => {
