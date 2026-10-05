@@ -557,7 +557,7 @@ async function init() {
       pauta.style.setProperty("--cena-cor", cena.corCena);
       marcaDagua.className = "categoria-marca-dagua tem-cena";
       marcaDagua.innerHTML = `
-        <svg class="cena-silhueta" viewBox="0 0 200 24" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${cena.silhueta}</svg>
+        <svg class="cena-silhueta" viewBox="0 0 200 24" preserveAspectRatio="none">${cena.silhueta}</svg>
         <span class="cena-icone cena-icone-eco">${motivoDaCategoria(categoriaAtiva)}</span>
         <span class="cena-icone">${motivoDaCategoria(categoriaAtiva)}</span>
         <span class="cena-nome">${categoriaAtiva}</span>
