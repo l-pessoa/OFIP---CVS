@@ -93,6 +93,10 @@ function svgFechar() {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 }
 
+function svgBaixar() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
+}
+
 function idDoArquivoDrive(link) {
   try {
     return new URL(link).searchParams.get("id");
@@ -108,6 +112,7 @@ function initVisualizador() {
   modal.innerHTML = `
     <div class="visualizador-topo">
       <span class="visualizador-titulo" id="visualizador-titulo"></span>
+      <a class="visualizador-baixar" download aria-label="Baixar PDF">${svgBaixar()}</a>
       <button type="button" class="visualizador-fechar" aria-label="Fechar">${svgFechar()}</button>
     </div>
     <iframe class="visualizador-iframe" title="Partitura" allow="fullscreen"></iframe>
@@ -116,18 +121,60 @@ function initVisualizador() {
 
   const iframe = modal.querySelector(".visualizador-iframe");
   const titulo = modal.querySelector("#visualizador-titulo");
+  const linkBaixar = modal.querySelector(".visualizador-baixar");
+  let wakeLock = null;
+
+  async function pedirWakeLock() {
+    if (!("wakeLock" in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+    } catch {
+      wakeLock = null;
+    }
+  }
+
+  function liberarWakeLock() {
+    if (wakeLock) {
+      wakeLock.release().catch(() => {});
+      wakeLock = null;
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && !modal.hidden && !wakeLock) {
+      pedirWakeLock();
+    }
+  });
 
   function fechar() {
+    const estavaAberto = !modal.hidden;
     modal.hidden = true;
     iframe.src = "";
+    liberarWakeLock();
+    if (estavaAberto && history.state && history.state.visualizador) {
+      history.back();
+    }
   }
 
   modal.querySelector(".visualizador-fechar").addEventListener("click", fechar);
 
+  window.addEventListener("popstate", () => {
+    if (!modal.hidden) {
+      modal.hidden = true;
+      iframe.src = "";
+      liberarWakeLock();
+    }
+  });
+
   return function abrir(idArquivo, tituloHino) {
     titulo.textContent = tituloHino;
-    iframe.src = `https://drive.google.com/file/d/${idArquivo}/preview`;
+    const urlPdf = `${API_BASE}/pdf?id=${idArquivo}`;
+    iframe.src = urlPdf;
+    linkBaixar.href = urlPdf;
+    linkBaixar.download = `${tituloHino}.pdf`;
     modal.hidden = false;
+    history.pushState({ visualizador: true }, "");
+    pedirWakeLock();
   };
 }
 
@@ -278,6 +325,9 @@ async function init() {
       categoriaAtiva = nome;
       atualizar();
     });
+
+    const marcaDagua = document.getElementById("categoria-marca-dagua");
+    marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
 
     const favoritoIds = getFavoritoIds();
     const onToggleFavorito = (id) => {

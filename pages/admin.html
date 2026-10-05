@@ -61,7 +61,11 @@
         <p class="admin-info" id="aviso-categoria-coral" hidden>Categoria: Coral Vozes de Sião (automático, só naipe de coral anexado)</p>
 
         <label class="campo-label" for="audio_referencia">Áudio de referência (opcional)</label>
-        <input type="file" id="audio_referencia" name="audio_referencia" accept="audio/*" />
+        <div class="campo-arquivo-audio">
+          <input type="file" id="audio_referencia" name="audio_referencia" accept="audio/*" class="arquivo-input" />
+          <label class="arquivo-btn" for="audio_referencia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg><span>Escolher arquivo</span></label>
+          <span class="arquivo-status" id="audio-arquivo-status"></span>
+        </div>
         <p class="admin-info" id="aviso-audio-existente" hidden>Já tem áudio — selecione um novo arquivo só se quiser substituir.</p>
 
         <h2 class="admin-subtitulo">Orquestra</h2>

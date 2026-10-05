@@ -57,21 +57,39 @@ function popularCategorias() {
   }
 }
 
+function iconeUpload() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>';
+}
+
 function popularNaipes(containerId, lista) {
   const container = document.getElementById(containerId);
   for (const nome of lista) {
     const campo = slugCampo(nome);
-    const label = document.createElement("label");
-    label.className = "naipe-campo";
-    label.dataset.naipe = nome;
-    label.innerHTML = `<span>${nome}</span>`;
-    const input = document.createElement("input");
-    input.type = "file";
-    input.name = campo;
-    input.accept = "application/pdf";
-    label.appendChild(input);
-    container.appendChild(label);
+    const inputId = `arquivo-${campo}`;
+    const wrapper = document.createElement("div");
+    wrapper.className = "naipe-campo";
+    wrapper.dataset.naipe = nome;
+    wrapper.innerHTML = `
+      <span class="naipe-campo-nome">${nome}</span>
+      <input type="file" id="${inputId}" name="${campo}" accept="application/pdf" class="arquivo-input" />
+      <label class="arquivo-btn" for="${inputId}">${iconeUpload()}<span>Escolher arquivo</span></label>
+      <span class="arquivo-status"></span>
+    `;
+    container.appendChild(wrapper);
   }
+}
+
+function initNomesArquivo() {
+  document.getElementById("form-hino").addEventListener("change", (evento) => {
+    const input = evento.target;
+    if (input.type !== "file") return;
+    const nomeArquivo = input.files[0]?.name ?? "";
+    const status =
+      input.id === "audio_referencia"
+        ? document.getElementById("audio-arquivo-status")
+        : input.closest(".naipe-campo")?.querySelector(".arquivo-status");
+    if (status) status.textContent = nomeArquivo;
+  });
 }
 
 function initCategoriaAutomatica() {
@@ -180,20 +198,22 @@ function renderizarLista() {
 }
 
 function limparMarcasExistentes() {
-  document.querySelectorAll(".naipe-existe").forEach((marca) => marca.remove());
+  document.querySelectorAll(".naipe-campo").forEach((campo) => {
+    campo.classList.remove("tem-arquivo");
+    campo.querySelector(".arquivo-status").textContent = "";
+  });
+  document.getElementById("audio-arquivo-status").textContent = "";
   document.getElementById("aviso-audio-existente").hidden = true;
 }
 
 function marcarArquivosExistentes(hino) {
   const porNaipe = new Map((hino.partes ?? []).map((p) => [p.naipe, p]));
 
-  document.querySelectorAll(".naipe-campo").forEach((label) => {
-    const nomeNaipe = label.dataset.naipe;
+  document.querySelectorAll(".naipe-campo").forEach((campo) => {
+    const nomeNaipe = campo.dataset.naipe;
     if (porNaipe.has(nomeNaipe)) {
-      const marca = document.createElement("span");
-      marca.className = "naipe-existe";
-      marca.textContent = "já tem arquivo";
-      label.insertBefore(marca, label.querySelector("input"));
+      campo.classList.add("tem-arquivo");
+      campo.querySelector(".arquivo-status").textContent = "já tem arquivo";
     }
   });
 
@@ -312,6 +332,7 @@ popularCategorias();
 popularNaipes("naipes-orquestra", NAIPES.orquestra);
 popularNaipes("naipes-coral", NAIPES.coral);
 initCategoriaAutomatica();
+initNomesArquivo();
 initListaBotoes();
 initSenha();
 initFormulario();

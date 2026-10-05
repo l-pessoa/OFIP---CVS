@@ -86,19 +86,27 @@
 .catalogo-pauta {
   position: relative;
   height: 44px;
+  overflow: hidden;
 }
 
-.pauta-linhas {
+.categoria-marca-dagua {
   position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--surface) 0px,
-    var(--surface) 1px,
-    transparent 1px,
-    transparent 11px
-  );
-  opacity: .4;
+  top: 50%;
+  right: -6%;
+  width: 150px;
+  height: 150px;
+  color: var(--surface);
+  opacity: .18;
+  transform: translateY(-50%) rotate(-8deg);
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.categoria-marca-dagua svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
 }
 
 .catalogo-busca {
@@ -395,7 +403,8 @@
   font-size: 16px;
 }
 
-.visualizador-fechar {
+.visualizador-fechar,
+.visualizador-baixar {
   flex: none;
   width: 36px;
   height: 36px;
@@ -409,16 +418,24 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
+  transition: background-color .15s ease, color .15s ease, transform .1s ease;
   cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
 }
 
-.visualizador-fechar svg {
+.visualizador-fechar svg,
+.visualizador-baixar svg {
   width: 18px;
   height: 18px;
 }
 
+.visualizador-fechar:active,
+.visualizador-baixar:active {
+  transform: scale(.92);
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .visualizador-fechar:hover {
+  .visualizador-fechar:hover,
+  .visualizador-baixar:hover {
     background: var(--accent);
     color: #FFFFFF;
   }

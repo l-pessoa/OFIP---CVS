@@ -1,20 +1,33 @@
-// Lista provisória, montada a partir do que foi citado na conversa.
-// PRECISA ser confirmada com o maestro Aldo antes de ir pro ar —
-// é só editar os arrays abaixo, nada mais no projeto depende do texto exato.
+// Lista confirmada a partir das partes reais enviadas pelo Aldo (hino
+// "Plena Paz" — Harpa 3). Timpano e bateria são instrumentos diferentes,
+// por isso ficam em naipes separados em vez de um "Percussão" genérico.
 export const NAIPES = {
   orquestra: [
     "Violino 1",
     "Violino 2",
     "Violino 3",
+    "Violino Estudante",
     "Viola",
     "Violoncelo",
     "Contrabaixo",
-    "Flauta",
-    "Clarinete",
-    "Trompete",
-    "Trombone",
+    "Piano",
+    "Flauta 1",
+    "Flauta 2",
+    "Flauta Estudante",
+    "Clarinete 1",
+    "Clarinete 2",
+    "Saxofone Alto",
+    "Saxofone Tenor",
+    "Saxofone Barítono",
+    "Trompete 1",
+    "Trompete 2",
+    "Trompete 3",
+    "Trombone 1",
+    "Trombone 2",
     "Trompa",
-    "Percussão",
+    "Tuba",
+    "Bateria",
+    "Tímpano",
   ],
   coral: ["Soprano", "Contralto", "Tenor", "Baixo"],
 };

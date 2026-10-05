@@ -43,6 +43,12 @@ export const CATEGORIAS = [
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4 18l-1-9 5 4 4-6 4 6 5-4-1 9"/></svg>`,
   },
   {
+    nome: "Cantata",
+    cor: "#A65D18",
+    // Estrela de Belém — hinos exclusivos da cantata de Natal.
+    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12.00,3.00 14.17,9.01 20.56,9.22 15.52,13.14 17.29,19.28 12.00,15.70 6.71,19.28 8.48,13.14 3.44,9.22 9.83,9.01"/></svg>`,
+  },
+  {
     nome: "Outros",
     cor: "#833700",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.5"/><path d="M9.5 18V5l8-2v11"/></svg>`,
