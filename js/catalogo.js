@@ -1,5 +1,5 @@
 import { listarHinos, API_BASE } from "./api.js";
-import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
+import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -78,9 +78,10 @@ function motivoDaCategoria(nome) {
   return encontrada ? encontrada.motivo : MOTIVO_PADRAO;
 }
 
-function faixaDaCategoria(nome) {
+function cenaDaCategoria(nome) {
   const encontrada = CATEGORIAS.find((c) => c.nome === nome);
-  return encontrada?.corFaixa ?? null;
+  if (!encontrada?.corCena) return null;
+  return { corCena: encontrada.corCena, silhueta: encontrada.silhueta ?? SILHUETA_PADRAO };
 }
 
 function agruparPorCategoria(hinos) {
@@ -548,18 +549,26 @@ async function init() {
     });
 
     const marcaDagua = document.getElementById("categoria-marca-dagua");
-    marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
+    const pauta = document.querySelector(".catalogo-pauta");
+    const cena = categoriaAtiva && categoriaAtiva !== FAVORITOS.nome ? cenaDaCategoria(categoriaAtiva) : null;
 
-    const banner = document.getElementById("categoria-banner");
-    const faixa = categoriaAtiva && categoriaAtiva !== FAVORITOS.nome ? faixaDaCategoria(categoriaAtiva) : null;
-    if (faixa) {
-      banner.hidden = false;
-      banner.style.setProperty("--categoria-banner-bg", faixa);
-      banner.style.setProperty("--categoria-banner-cor", corDaCategoria(categoriaAtiva));
-      banner.innerHTML = `${motivoDaCategoria(categoriaAtiva)}<span class="categoria-banner-nome">${categoriaAtiva}</span>`;
+    if (cena) {
+      pauta.classList.add("tem-cena");
+      pauta.style.setProperty("--cena-cor", cena.corCena);
+      marcaDagua.className = "categoria-marca-dagua tem-cena";
+      marcaDagua.innerHTML = `
+        <svg class="cena-silhueta" viewBox="0 0 24 24" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">${cena.silhueta}</svg>
+        <span class="cena-icone">${motivoDaCategoria(categoriaAtiva)}</span>
+        <span class="cena-nome">${categoriaAtiva}</span>
+      `;
     } else {
-      banner.hidden = true;
+      pauta.classList.remove("tem-cena");
+      pauta.style.removeProperty("--cena-cor");
+      marcaDagua.className = "categoria-marca-dagua";
+      marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
     }
+
+    document.querySelector(".catalogo-header-top").hidden = !!cena;
 
     const favoritoIds = getFavoritoIds();
     const onToggleFavorito = (id) => {
