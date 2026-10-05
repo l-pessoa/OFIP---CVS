@@ -1,10 +1,10 @@
 // Ordem fixa de exibição das categorias reais do hinário, cada uma com:
 // - cor: a cor de destaque (lombada do card, chip ativo, marca d'água).
-//   Pra Harpa / Coral Vozes de Sião / Cânticos de Davi / Outros continua
-//   dentro da paleta de marrom/laranja original. Heroínas da Fé, Átrios,
-//   Júbilos dos Fiéis e Cantata ganharam tons próprios (bem suaves, puxado
-//   pro branco) a pedido do Lucas — não é regra geral, é só essas 4.
-// - corFaixa: opcional. Só existe nessas mesmas 4 categorias — é o fundo
+//   Pra Harpa / Coral Vozes de Sião / Outros continua dentro da paleta de
+//   marrom/laranja original. Heroínas da Fé, Átrios, Júbilos dos Fiéis,
+//   Cânticos de Davi e Cantata ganharam tons próprios (bem suaves, puxado
+//   pro branco) a pedido do Lucas — não é regra geral, é só essas 5.
+// - corFaixa: opcional. Só existe nessas mesmas 5 categorias — é o fundo
 //   da faixa personalizada que aparece entre a navegação e a lista quando
 //   a categoria tá selecionada. Categoria sem corFaixa = sem faixa, fica
 //   exatamente como era antes (reverter = só apagar essa propriedade).
@@ -47,7 +47,8 @@ export const CATEGORIAS = [
   },
   {
     nome: "Cânticos de Davi",
-    cor: "#7B3900",
+    cor: "#B8963E",
+    corFaixa: "#F6EEDA",
     // Coroa (Davi rei), não estrela — a estrela fica reservada pra Favoritos.
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4 18l-1-9 5 4 4-6 4 6 5-4-1 9"/></svg>`,
   },
