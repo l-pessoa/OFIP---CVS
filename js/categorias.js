@@ -1,14 +1,13 @@
 // Ordem fixa de exibição das categorias reais do hinário, cada uma com:
-// - cor: a cor de destaque (lombada do card, chip ativo).
-//   Pra Harpa / Coral Vozes de Sião / Outros continua dentro da paleta de
-//   marrom/laranja original. Heroínas da Fé, Átrios, Júbilos dos Fiéis,
-//   Cânticos de Davi e Cantata ganharam tons próprios a pedido do Lucas —
-//   não é regra geral, é só essas 5.
-// - corCena: opcional. Só existe nessas mesmas 5 categorias — é a base do
-//   gradiente escuro da cena personalizada que substitui o fundo da área
-//   de busca quando a categoria tá selecionada (ícone grande + nome em
-//   Aladin + silhueta decorativa). Categoria sem corCena = sem cena, fica
-//   exatamente como era antes (reverter = só apagar essa propriedade).
+// - cor: a cor de destaque (lombada do card, chip ativo). Harpa, Coral
+//   Vozes de Sião e Outros ficam dentro da paleta de marrom/laranja
+//   original (pedido do Lucas pra não fugir muito da cor da marca); as
+//   outras 5 têm tons próprios.
+// - corCena: a base do gradiente escuro da cena personalizada que
+//   substitui o cabeçalho inteiro (cor + sem moldura, full-bleed) quando
+//   a categoria tá selecionada — ícone grande, nome em Aladin, silhueta
+//   decorativa embaixo. Todas as categorias têm. Pra tirar a cena de uma
+//   categoria específica é só apagar essa propriedade dela.
 // - silhueta: opcional, SVG da linha decorativa no rodapé da cena. Se
 //   ausente, usa a silhueta de montanhas genérica (ver SILHUETA_PADRAO).
 // - motivo: um SVG decorativo pequeno, desenhado à mão (mesmo estilo dos
@@ -26,6 +25,7 @@ export const CATEGORIAS = [
   {
     nome: "Harpa",
     cor: "#EF6400",
+    corCena: "#6B2E00",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V5C6 3 8 2 10 2c3 0 5 2 6 5l2 4"/><path d="M9 21V7M12 21V8M15 21V10"/></svg>`,
   },
   {
@@ -38,6 +38,8 @@ export const CATEGORIAS = [
   {
     nome: "Coral Vozes de Sião",
     cor: "#9C4100",
+    corCena: "#4A2510",
+    silhueta: `<path d="M2 17c2-4 3-4 4 0s3 4 4 0 3-4 4 0 3-4 4 0 3-4 4 0" vector-effect="non-scaling-stroke"/>`,
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/></svg>`,
   },
   {
@@ -70,6 +72,7 @@ export const CATEGORIAS = [
   {
     nome: "Outros",
     cor: "#833700",
+    corCena: "#332014",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.5"/><path d="M9.5 18V5l8-2v11"/></svg>`,
   },
 ];
