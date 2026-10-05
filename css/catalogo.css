@@ -200,6 +200,42 @@
   fill: var(--chip-cor, var(--accent));
 }
 
+.categoria-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 16px 4px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--categoria-banner-bg, transparent);
+  color: var(--categoria-banner-cor, var(--text-secondary));
+}
+
+.categoria-banner[hidden] {
+  display: none;
+}
+
+.categoria-banner svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  stroke: currentColor;
+}
+
+.categoria-banner-nome {
+  font-family: "Aladin", cursive;
+  font-size: 19px;
+  color: var(--text);
+}
+
+@media (min-width: 768px) {
+  .categoria-banner {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .hino-lista {
   max-width: 720px;
   margin: 0 auto;

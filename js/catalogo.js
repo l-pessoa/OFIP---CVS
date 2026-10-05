@@ -78,6 +78,11 @@ function motivoDaCategoria(nome) {
   return encontrada ? encontrada.motivo : MOTIVO_PADRAO;
 }
 
+function faixaDaCategoria(nome) {
+  const encontrada = CATEGORIAS.find((c) => c.nome === nome);
+  return encontrada?.corFaixa ?? null;
+}
+
 function agruparPorCategoria(hinos) {
   const grupos = new Map();
   for (const cat of CATEGORIAS) grupos.set(cat.nome, []);
@@ -544,6 +549,17 @@ async function init() {
 
     const marcaDagua = document.getElementById("categoria-marca-dagua");
     marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
+
+    const banner = document.getElementById("categoria-banner");
+    const faixa = categoriaAtiva && categoriaAtiva !== FAVORITOS.nome ? faixaDaCategoria(categoriaAtiva) : null;
+    if (faixa) {
+      banner.hidden = false;
+      banner.style.setProperty("--categoria-banner-bg", faixa);
+      banner.style.setProperty("--categoria-banner-cor", corDaCategoria(categoriaAtiva));
+      banner.innerHTML = `${motivoDaCategoria(categoriaAtiva)}<span class="categoria-banner-nome">${categoriaAtiva}</span>`;
+    } else {
+      banner.hidden = true;
+    }
 
     const favoritoIds = getFavoritoIds();
     const onToggleFavorito = (id) => {

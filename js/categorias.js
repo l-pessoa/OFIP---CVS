@@ -1,11 +1,17 @@
 // Ordem fixa de exibição das categorias reais do hinário, cada uma com:
-// - cor: uma das 7 cores já existentes na paleta (tokens.css + paradas do
-//   --login-gradient) — nenhuma cor nova, usada na lombada do card e no chip.
+// - cor: a cor de destaque (lombada do card, chip ativo, marca d'água).
+//   Pra Harpa / Coral Vozes de Sião / Cânticos de Davi / Outros continua
+//   dentro da paleta de marrom/laranja original. Heroínas da Fé, Átrios,
+//   Júbilos dos Fiéis e Cantata ganharam tons próprios (bem suaves, puxado
+//   pro branco) a pedido do Lucas — não é regra geral, é só essas 4.
+// - corFaixa: opcional. Só existe nessas mesmas 4 categorias — é o fundo
+//   da faixa personalizada que aparece entre a navegação e a lista quando
+//   a categoria tá selecionada. Categoria sem corFaixa = sem faixa, fica
+//   exatamente como era antes (reverter = só apagar essa propriedade).
 // - motivo: um SVG decorativo pequeno, desenhado à mão (mesmo estilo dos
 //   ícones sol/lua e do cursor-note.svg — traço fino, sem preenchimento
-//   sólido), que decora o canto do card em preto e branco (baixa opacidade,
-//   cor do texto). Só a forma muda por categoria — a cor do motivo é sempre
-//   neutra, quem carrega a cor da categoria é a lombada/chip.
+//   sólido), usado no canto do card, na marca d'água do cabeçalho e dentro
+//   da faixa personalizada.
 //
 // Os nomes entre parênteses no pedido original (irmãs, coral, adolescentes,
 // jovens, crianças) são só identificação de público — não aparecem na UI,
@@ -18,7 +24,8 @@ export const CATEGORIAS = [
   },
   {
     nome: "Heroínas da Fé",
-    cor: "#DF7529",
+    cor: "#C97F92",
+    corFaixa: "#FBEAEE",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="2.5"/><circle cx="16.3" cy="10.2" r="2.5"/><circle cx="14.8" cy="15.2" r="2.5"/><circle cx="9.2" cy="15.2" r="2.5"/><circle cx="7.7" cy="10.2" r="2.5"/></svg>`,
   },
   {
@@ -28,12 +35,14 @@ export const CATEGORIAS = [
   },
   {
     nome: "Átrios",
-    cor: "#D36517",
+    cor: "#7FA3C4",
+    corFaixa: "#E8F0F7",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V11a7 7 0 0 1 14 0v10"/><path d="M5 21h14M8 21v-8M16 21v-8"/></svg>`,
   },
   {
     nome: "Júbilos dos Fiéis",
-    cor: "#BF8645",
+    cor: "#4A74A0",
+    corFaixa: "#DCE8F2",
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>`,
   },
   {
@@ -44,7 +53,8 @@ export const CATEGORIAS = [
   },
   {
     nome: "Cantata",
-    cor: "#A65D18",
+    cor: "#7A9E82",
+    corFaixa: "#E6EFE7",
     // Estrela de Belém — hinos exclusivos da cantata de Natal.
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12.00,3.00 14.17,9.01 20.56,9.22 15.52,13.14 17.29,19.28 12.00,15.70 6.71,19.28 8.48,13.14 3.44,9.22 9.83,9.01"/></svg>`,
   },
