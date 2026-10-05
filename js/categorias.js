@@ -26,7 +26,8 @@ export const CATEGORIAS = [
     nome: "Heroínas da Fé",
     cor: "#C97F92",
     corFaixa: "#FBEAEE",
-    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="2.5"/><circle cx="16.3" cy="10.2" r="2.5"/><circle cx="14.8" cy="15.2" r="2.5"/><circle cx="9.2" cy="15.2" r="2.5"/><circle cx="7.7" cy="10.2" r="2.5"/></svg>`,
+    // Flor — referência às "irmãs", o público desse grupo.
+    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12.00" cy="7.40" r="3"/><circle cx="16.37" cy="10.58" r="3"/><circle cx="14.70" cy="15.72" r="3"/><circle cx="9.30" cy="15.72" r="3"/><circle cx="7.63" cy="10.58" r="3"/><circle cx="12" cy="12" r="2.2"/></svg>`,
   },
   {
     nome: "Coral Vozes de Sião",
@@ -56,8 +57,8 @@ export const CATEGORIAS = [
     nome: "Cantata",
     cor: "#7A9E82",
     corFaixa: "#E6EFE7",
-    // Estrela de Belém — hinos exclusivos da cantata de Natal.
-    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12.00,3.00 14.17,9.01 20.56,9.22 15.52,13.14 17.29,19.28 12.00,15.70 6.71,19.28 8.48,13.14 3.44,9.22 9.83,9.01"/></svg>`,
+    // Estrela de Belém sobre os montes — cena natalina, hinos da cantata.
+    motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="12.00,3.20 13.23,6.80 17.04,6.86 14.00,9.15 15.12,12.79 12.00,10.60 8.88,12.79 10.00,9.15 6.96,6.86 10.77,6.80"/><path d="M2 21l5-6 4 5 4-5.5 4 5.5 3-4"/></svg>`,
   },
   {
     nome: "Outros",
