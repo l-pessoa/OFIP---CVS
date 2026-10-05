@@ -97,6 +97,176 @@ function svgBaixar() {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
 }
 
+function svgImprimir() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>';
+}
+
+let pdfjsCarregando = null;
+function carregarPdfJs() {
+  if (pdfjsCarregando) return pdfjsCarregando;
+  pdfjsCarregando = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error("Não consegui carregar o leitor de PDF."));
+    document.head.appendChild(script);
+  });
+  return pdfjsCarregando;
+}
+
+function svgPlay() {
+  return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+}
+
+function svgPause() {
+  return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+}
+
+function svgVoltar10() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>';
+}
+
+function svgAvancar10() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg>';
+}
+
+function formatarTempo(segundos) {
+  if (!Number.isFinite(segundos) || segundos < 0) return "0:00";
+  const m = Math.floor(segundos / 60);
+  const s = Math.floor(segundos % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function initAudioPlayer(raiz, src) {
+  const audio = raiz.querySelector(".audio-elemento");
+  const btnPlay = raiz.querySelector(".audio-play");
+  const btnVoltar = raiz.querySelector(".audio-voltar");
+  const btnAvancar = raiz.querySelector(".audio-avancar");
+  const barra = raiz.querySelector(".audio-progresso");
+  const preenchido = raiz.querySelector(".audio-progresso-preenchido");
+  const tempoAtual = raiz.querySelector(".audio-tempo-atual");
+  const tempoTotal = raiz.querySelector(".audio-tempo-total");
+
+  let carregado = false;
+  let carregando = false;
+  let tocarAoCarregar = false;
+  let arrastando = false;
+
+  function fracaoDoEvento(evento) {
+    const rect = barra.getBoundingClientRect();
+    const x = (evento.touches ? evento.touches[0].clientX : evento.clientX) - rect.left;
+    return Math.min(1, Math.max(0, x / rect.width));
+  }
+
+  function aplicarFracaoVisual(fracao) {
+    preenchido.style.width = `${fracao * 100}%`;
+  }
+
+  async function carregarAudio() {
+    if (carregado || carregando) return;
+    carregando = true;
+    btnPlay.classList.add("audio-carregando");
+    try {
+      const resposta = await fetch(src);
+      const total = Number(resposta.headers.get("content-length")) || 0;
+      const leitor = resposta.body.getReader();
+      const pedacos = [];
+      let recebido = 0;
+      for (;;) {
+        const { done, value } = await leitor.read();
+        if (done) break;
+        pedacos.push(value);
+        recebido += value.length;
+        if (total > 0) aplicarFracaoVisual(recebido / total);
+      }
+      const blob = new Blob(pedacos, { type: "audio/mpeg" });
+      audio.src = URL.createObjectURL(blob);
+      carregado = true;
+      aplicarFracaoVisual(0);
+      btnPlay.classList.remove("audio-carregando");
+      if (tocarAoCarregar) audio.play();
+    } catch {
+      btnPlay.classList.remove("audio-carregando");
+      carregando = false;
+    }
+  }
+
+  btnPlay.addEventListener("click", () => {
+    if (!carregado) {
+      tocarAoCarregar = true;
+      carregarAudio();
+      return;
+    }
+    if (audio.paused) audio.play();
+    else audio.pause();
+  });
+
+  btnVoltar.addEventListener("click", () => {
+    if (carregado) audio.currentTime = Math.max(0, audio.currentTime - 10);
+  });
+
+  btnAvancar.addEventListener("click", () => {
+    if (carregado) audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+  });
+
+  audio.addEventListener("play", () => {
+    btnPlay.innerHTML = svgPause();
+    btnPlay.setAttribute("aria-label", "Pausar");
+  });
+
+  audio.addEventListener("pause", () => {
+    btnPlay.innerHTML = svgPlay();
+    btnPlay.setAttribute("aria-label", "Tocar");
+  });
+
+  audio.addEventListener("loadedmetadata", () => {
+    tempoTotal.textContent = formatarTempo(audio.duration);
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (arrastando) return;
+    tempoAtual.textContent = formatarTempo(audio.currentTime);
+    if (audio.duration) aplicarFracaoVisual(audio.currentTime / audio.duration);
+  });
+
+  audio.addEventListener("ended", () => {
+    aplicarFracaoVisual(0);
+    tempoAtual.textContent = "0:00";
+  });
+
+  function iniciarArraste(evento) {
+    if (!carregado || !audio.duration) return;
+    arrastando = true;
+    aplicarFracaoVisual(fracaoDoEvento(evento));
+  }
+
+  function moverArraste(evento) {
+    if (!arrastando) return;
+    aplicarFracaoVisual(fracaoDoEvento(evento));
+  }
+
+  function soltarArraste(evento) {
+    if (!arrastando) return;
+    arrastando = false;
+    const fracao = fracaoDoEvento(evento);
+    audio.currentTime = fracao * audio.duration;
+    tempoAtual.textContent = formatarTempo(audio.currentTime);
+  }
+
+  barra.addEventListener("pointerdown", (evento) => {
+    barra.setPointerCapture(evento.pointerId);
+    iniciarArraste(evento);
+  });
+  barra.addEventListener("pointermove", moverArraste);
+  barra.addEventListener("pointerup", soltarArraste);
+
+  return { carregarAudio };
+}
+
 function idDoArquivoDrive(link) {
   try {
     return new URL(link).searchParams.get("id");
@@ -112,16 +282,18 @@ function initVisualizador() {
   modal.innerHTML = `
     <div class="visualizador-topo">
       <span class="visualizador-titulo" id="visualizador-titulo"></span>
+      <a class="visualizador-imprimir" target="_blank" rel="noopener" aria-label="Abrir pra imprimir">${svgImprimir()}</a>
       <a class="visualizador-baixar" download aria-label="Baixar PDF">${svgBaixar()}</a>
       <button type="button" class="visualizador-fechar" aria-label="Fechar">${svgFechar()}</button>
     </div>
-    <iframe class="visualizador-iframe" title="Partitura" allow="fullscreen"></iframe>
+    <div class="visualizador-paginas" id="visualizador-paginas"></div>
   `;
   document.body.appendChild(modal);
 
-  const iframe = modal.querySelector(".visualizador-iframe");
+  const paginas = modal.querySelector("#visualizador-paginas");
   const titulo = modal.querySelector("#visualizador-titulo");
   const linkBaixar = modal.querySelector(".visualizador-baixar");
+  const linkImprimir = modal.querySelector(".visualizador-imprimir");
   let wakeLock = null;
 
   async function pedirWakeLock() {
@@ -149,7 +321,7 @@ function initVisualizador() {
   function fechar() {
     const estavaAberto = !modal.hidden;
     modal.hidden = true;
-    iframe.src = "";
+    paginas.innerHTML = "";
     liberarWakeLock();
     if (estavaAberto && history.state && history.state.visualizador) {
       history.back();
@@ -161,20 +333,46 @@ function initVisualizador() {
   window.addEventListener("popstate", () => {
     if (!modal.hidden) {
       modal.hidden = true;
-      iframe.src = "";
+      paginas.innerHTML = "";
       liberarWakeLock();
     }
   });
 
+  async function renderizarPdf(urlPdf) {
+    paginas.innerHTML = '<p class="visualizador-carregando">Carregando partitura...</p>';
+    try {
+      const pdfjsLib = await carregarPdfJs();
+      const documento = await pdfjsLib.getDocument(urlPdf).promise;
+      paginas.innerHTML = "";
+      const larguraAlvo = paginas.clientWidth - 24;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      for (let i = 1; i <= documento.numPages; i++) {
+        const pagina = await documento.getPage(i);
+        const base = pagina.getViewport({ scale: 1 });
+        const viewport = pagina.getViewport({ scale: (larguraAlvo / base.width) * dpr });
+        const canvas = document.createElement("canvas");
+        canvas.className = "visualizador-pagina";
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = `${larguraAlvo}px`;
+        paginas.appendChild(canvas);
+        await pagina.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      }
+    } catch {
+      paginas.innerHTML = '<p class="visualizador-carregando">Não deu pra carregar a partitura aqui. Tenta baixar pelo botão acima.</p>';
+    }
+  }
+
   return function abrir(idArquivo, tituloHino) {
     titulo.textContent = tituloHino;
     const urlPdf = `${API_BASE}/pdf?id=${idArquivo}`;
-    iframe.src = urlPdf;
     linkBaixar.href = urlPdf;
     linkBaixar.download = `${tituloHino}.pdf`;
+    linkImprimir.href = urlPdf;
     modal.hidden = false;
     history.pushState({ visualizador: true }, "");
     pedirWakeLock();
+    renderizarPdf(urlPdf);
   };
 }
 
@@ -217,21 +415,39 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
     <div class="hino-naipes">${renderNaipeChips(hino, naipeDoUsuario)}</div>
     <div class="hino-detalhes" hidden>
       ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">Visualizar partitura</button>` : ""}
-      ${hino.link_mp3 ? `<audio class="hino-audio" controls preload="none" src="${API_BASE}/audio?id=${idDoArquivoDrive(hino.link_mp3)}"></audio>` : ""}
+      ${
+        hino.link_mp3
+          ? `<div class="audio-player">
+              <audio class="audio-elemento" preload="none"></audio>
+              <div class="audio-progresso" role="slider" aria-label="Posição do áudio" aria-valuemin="0" aria-valuemax="100">
+                <div class="audio-progresso-preenchido"></div>
+              </div>
+              <div class="audio-tempos">
+                <span class="audio-tempo-atual">0:00</span>
+                <span class="audio-tempo-total">0:00</span>
+              </div>
+              <div class="audio-controles">
+                <button type="button" class="audio-btn audio-voltar" aria-label="Voltar 10 segundos">${svgVoltar10()}</button>
+                <button type="button" class="audio-btn audio-play" aria-label="Tocar">${svgPlay()}</button>
+                <button type="button" class="audio-btn audio-avancar" aria-label="Avançar 10 segundos">${svgAvancar10()}</button>
+              </div>
+            </div>`
+          : ""
+      }
     </div>
   `;
 
   const toggle = article.querySelector(".hino-card-toggle");
   const detalhes = article.querySelector(".hino-detalhes");
-  const audio = article.querySelector(".hino-audio");
+  const audioPlayerEl = article.querySelector(".audio-player");
+  const audioPlayer = audioPlayerEl
+    ? initAudioPlayer(audioPlayerEl, `${API_BASE}/audio?id=${idDoArquivoDrive(hino.link_mp3)}`)
+    : null;
   toggle.addEventListener("click", () => {
     const aberto = toggle.getAttribute("aria-expanded") === "true";
     toggle.setAttribute("aria-expanded", String(!aberto));
     detalhes.hidden = aberto;
-    if (!aberto && audio && audio.preload !== "auto") {
-      audio.preload = "auto";
-      audio.load();
-    }
+    if (!aberto && audioPlayer) audioPlayer.carregarAudio();
   });
 
   article.querySelector(".favorito-btn").addEventListener("click", () => {
@@ -266,7 +482,7 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "categoria-chip" + (nome === categoriaAtiva ? " is-ativa" : "");
-    btn.textContent = nome;
+    btn.innerHTML = `${motivoDaCategoria(nome)}<span>${nome}</span>`;
     btn.style.setProperty("--chip-cor", cor);
     btn.addEventListener("click", () => onSelecionar(nome));
     nav.appendChild(btn);
