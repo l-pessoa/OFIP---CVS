@@ -1,10 +1,45 @@
 import { listarHinos, API_BASE } from "./api.js";
 import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
 import { ICONES_NAIPE_CORAL } from "./naipes.js";
+import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
 const FAVORITOS_KEY = "ofipCvsFavoritos";
+const TUTORIAL_CATALOGO_KEY = "ofipCvsTutorialCatalogo";
+
+const PASSOS_TUTORIAL_CATALOGO = [
+  {
+    seletor: ".categoria-nav",
+    titulo: "Categorias",
+    texto: "Cada aba é uma categoria de hinos, com sua própria cor. Toque pra filtrar os hinos daquele grupo.",
+  },
+  {
+    seletor: "#busca",
+    titulo: "Buscar",
+    texto: "Procure um hino pelo nome ou pelo número da Harpa.",
+  },
+  {
+    seletor: ".hino-card",
+    titulo: "Abra um hino",
+    texto: "Toque num hino pra ver as partes disponíveis, visualizar a partitura e ouvir o áudio de referência.",
+  },
+  {
+    seletor: ".favorito-btn",
+    titulo: "Favoritos",
+    texto: "Toque na estrela pra favoritar — o hino passa a aparecer na aba Favoritos, no começo da lista.",
+  },
+  {
+    seletor: "#theme-toggle",
+    titulo: "Modo claro e escuro",
+    texto: "Toque pra trocar a aparência do app entre claro e escuro.",
+  },
+  {
+    seletor: null,
+    titulo: "Menu",
+    texto: "Toque na aba Favoritos ou no botão ☰ que aparece lá em cima pra achar a área de Maestros (se tiver acesso), esse tutorial de novo e a opção de sair da conta.",
+  },
+];
 
 function getUsuario() {
   const raw = localStorage.getItem(USER_KEY);
@@ -45,6 +80,10 @@ function initMenu() {
   document.getElementById("menu-sair").addEventListener("click", () => {
     localStorage.removeItem(USER_KEY);
     window.location.href = "../index.html";
+  });
+
+  document.getElementById("menu-tutorial").addEventListener("click", () => {
+    iniciarTutorial(TUTORIAL_CATALOGO_KEY, PASSOS_TUTORIAL_CATALOGO);
   });
 }
 
@@ -615,6 +654,10 @@ async function init() {
 
   document.getElementById("busca").addEventListener("input", atualizar);
   atualizar();
+
+  if (!tutorialVisto(TUTORIAL_CATALOGO_KEY)) {
+    iniciarTutorial(TUTORIAL_CATALOGO_KEY, PASSOS_TUTORIAL_CATALOGO);
+  }
 }
 
 init();

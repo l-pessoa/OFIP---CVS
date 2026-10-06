@@ -1,13 +1,35 @@
 import { NAIPES } from "./naipes.js";
 import { CATEGORIAS } from "./categorias.js";
+import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
 
+const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
 const SENHA_KEY = "ofipCvsAdminSenha";
+const TUTORIAL_ADMIN_KEY = "ofipCvsTutorialAdmin";
 const API_BASE = "https://x8ki-letl-twmt.n7.xano.io/api:u6Bs9PZE";
 const CATEGORIA_CORAL = "Coral Vozes de Sião";
 const MARCAS_DIACRITICAS = /[\u0300-\u036f]/g;
 
+const PASSOS_TUTORIAL_ADMIN = [
+  {
+    seletor: "#btn-novo-hino",
+    titulo: "Cadastrar hino",
+    texto: "Toque aqui pra adicionar um hino novo: título, categoria, áudio de referência e o PDF de cada naipe.",
+  },
+  {
+    seletor: ".hino-admin-item",
+    titulo: "Hinos cadastrados",
+    texto: "Aqui ficam todos os hinos já cadastrados. Toque em Editar pra atualizar algo, ou em Excluir pra remover de vez.",
+  },
+  {
+    seletor: null,
+    titulo: "Dentro do formulário",
+    texto: "Lá você escolhe a categoria, sobe o áudio de referência e anexa o PDF de cada naipe da orquestra e do coral — a categoria Coral Vozes de Sião é escolhida sozinha quando só tem parte de coral anexada.",
+  },
+];
+
 let hinosCache = [];
+let tutorialDisparado = false;
 
 function slugCampo(nome) {
   return nome
@@ -17,8 +39,38 @@ function slugCampo(nome) {
     .replace(/\s+/g, "_");
 }
 
+function getUsuario() {
+  const raw = localStorage.getItem(USER_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function identidadeUsuario() {
+  const usuario = getUsuario();
+  return usuario ? `${usuario.nome}|${usuario.naipe}` : "";
+}
+
 function senhaSalva() {
-  return sessionStorage.getItem(SENHA_KEY) || "";
+  const raw = localStorage.getItem(SENHA_KEY);
+  if (!raw) return "";
+  try {
+    const dados = JSON.parse(raw);
+    return dados.identidade === identidadeUsuario() ? dados.senha || "" : "";
+  } catch {
+    return "";
+  }
+}
+
+function salvarSenha(senha) {
+  localStorage.setItem(SENHA_KEY, JSON.stringify({ senha, identidade: identidadeUsuario() }));
+}
+
+function limparSenha() {
+  localStorage.removeItem(SENHA_KEY);
 }
 
 function initTheme() {
@@ -36,6 +88,7 @@ function mostrarTelaSenha(comErro) {
   document.getElementById("tela-formulario").hidden = true;
   document.getElementById("tela-senha").hidden = false;
   document.getElementById("senha-erro").hidden = !comErro;
+  document.getElementById("btn-tutorial-admin").hidden = true;
 }
 
 function mostrarLista() {
@@ -134,7 +187,7 @@ function initSenha() {
   document.getElementById("btn-entrar").addEventListener("click", () => {
     const senha = document.getElementById("senha-admin").value;
     if (!senha) return;
-    sessionStorage.setItem(SENHA_KEY, senha);
+    salvarSenha(senha);
     carregarLista();
   });
 }
@@ -150,7 +203,7 @@ async function carregarLista() {
     if (!resposta.ok) {
       const erro = await resposta.json().catch(() => ({}));
       if (erro.message === "Senha incorreta.") {
-        sessionStorage.removeItem(SENHA_KEY);
+        limparSenha();
         mostrarTelaSenha(true);
         return;
       }
@@ -161,6 +214,12 @@ async function carregarLista() {
     hinosCache = await resposta.json();
     status.textContent = "";
     renderizarLista();
+    document.getElementById("btn-tutorial-admin").hidden = false;
+
+    if (!tutorialDisparado && !tutorialVisto(TUTORIAL_ADMIN_KEY)) {
+      tutorialDisparado = true;
+      iniciarTutorial(TUTORIAL_ADMIN_KEY, PASSOS_TUTORIAL_ADMIN);
+    }
   } catch {
     status.textContent = "Erro de conexão. Tenta de novo.";
   }
@@ -263,7 +322,7 @@ async function confirmarExclusao(hino) {
     if (!resposta.ok) {
       const erro = await resposta.json().catch(() => ({}));
       if (erro.message === "Senha incorreta.") {
-        sessionStorage.removeItem(SENHA_KEY);
+        limparSenha();
         mostrarTelaSenha(true);
         return;
       }
@@ -281,6 +340,13 @@ async function confirmarExclusao(hino) {
 function initListaBotoes() {
   document.getElementById("btn-novo-hino").addEventListener("click", iniciarNovoHino);
   document.getElementById("btn-voltar-lista").addEventListener("click", carregarLista);
+}
+
+function initTutorial() {
+  document.getElementById("btn-tutorial-admin").addEventListener("click", () => {
+    mostrarLista();
+    iniciarTutorial(TUTORIAL_ADMIN_KEY, PASSOS_TUTORIAL_ADMIN);
+  });
 }
 
 function initFormulario() {
@@ -311,7 +377,7 @@ function initFormulario() {
       if (!resposta.ok) {
         const erro = await resposta.json().catch(() => ({}));
         if (erro.message === "Senha incorreta.") {
-          sessionStorage.removeItem(SENHA_KEY);
+          limparSenha();
           mostrarTelaSenha(true);
           return;
         }
@@ -334,5 +400,6 @@ popularNaipes("naipes-coral", NAIPES.coral);
 initCategoriaAutomatica();
 initNomesArquivo();
 initListaBotoes();
+initTutorial();
 initSenha();
 initFormulario();
