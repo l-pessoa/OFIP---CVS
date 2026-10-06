@@ -10,6 +10,11 @@
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/catalogo.css" />
+  <link rel="manifest" href="../manifest.json" />
+  <link rel="icon" href="../assets/icons/app/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="../assets/icons/app/favicon-16.png" sizes="16x16" type="image/png" />
+  <link rel="apple-touch-icon" href="../assets/icons/app/apple-touch-icon.png" />
+  <meta name="theme-color" content="#EF6400" />
 </head>
 <body>
   <div class="fundo-textura" aria-hidden="true"></div>
@@ -49,6 +54,16 @@
   <div class="catalogo-busca">
     <label for="busca" class="sr-only">Buscar por nome ou número da Harpa</label>
     <input type="search" id="busca" placeholder="Buscar por nome ou número da Harpa..." autocomplete="off" />
+    <div class="ordenar-wrap">
+      <button type="button" id="btn-ordenar" class="btn-ordenar" aria-label="Ordenar hinos" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M8 12h8M11 18h2"/></svg>
+      </button>
+      <div class="ordenar-dropdown" id="ordenar-dropdown" hidden>
+        <button type="button" class="ordenar-item" data-ordenar="alfabetica">Ordem alfabética</button>
+        <button type="button" class="ordenar-item" data-ordenar="recentes">Recém-adicionados</button>
+        <button type="button" class="ordenar-item" data-ordenar="antigos">Mais antigos</button>
+      </div>
+    </div>
   </div>
 
   <nav class="categoria-nav" id="categoria-nav" aria-label="Categorias de hinos"></nav>

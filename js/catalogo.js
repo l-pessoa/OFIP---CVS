@@ -596,6 +596,21 @@ async function init() {
   const categoriasComHinos = [...grupos.keys()].filter((nome) => grupos.get(nome).length > 0);
 
   let categoriaAtiva = categoriasComHinos[0] ?? null;
+  let ordenacaoAtual = null;
+
+  function ordenarHinos(lista) {
+    const copia = [...lista];
+    if (ordenacaoAtual === "alfabetica") {
+      copia.sort((a, b) => a.hino_titulo.localeCompare(b.hino_titulo, "pt-BR"));
+    } else if (ordenacaoAtual === "recentes") {
+      copia.sort((a, b) => b.created_at - a.created_at);
+    } else if (ordenacaoAtual === "antigos") {
+      copia.sort((a, b) => a.created_at - b.created_at);
+    } else if (categoriaAtiva === "Harpa") {
+      copia.sort((a, b) => (a.hino_numero_harpa ?? Infinity) - (b.hino_numero_harpa ?? Infinity));
+    }
+    return copia;
+  }
 
   function atualizar() {
     renderCategoriaNav(categoriasComHinos, categoriaAtiva, (nome) => {
@@ -653,10 +668,41 @@ async function init() {
             String(h.hino_numero_harpa ?? "").includes(termoBusca)
         )
       : hinosDaCategoria;
-    renderLista(filtrados, usuario.naipe, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador);
+    renderLista(ordenarHinos(filtrados), usuario.naipe, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador);
+
+    document.querySelectorAll(".ordenar-item").forEach((item) => {
+      item.classList.toggle("is-ativo", item.dataset.ordenar === ordenacaoAtual);
+    });
+    document.getElementById("btn-ordenar").classList.toggle("is-ativo", !!ordenacaoAtual);
   }
 
   document.getElementById("busca").addEventListener("input", atualizar);
+
+  const btnOrdenar = document.getElementById("btn-ordenar");
+  const ordenarDropdown = document.getElementById("ordenar-dropdown");
+
+  btnOrdenar.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    const aberto = btnOrdenar.getAttribute("aria-expanded") === "true";
+    btnOrdenar.setAttribute("aria-expanded", String(!aberto));
+    ordenarDropdown.hidden = aberto;
+  });
+
+  document.addEventListener("click", () => {
+    btnOrdenar.setAttribute("aria-expanded", "false");
+    ordenarDropdown.hidden = true;
+  });
+
+  document.querySelectorAll(".ordenar-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const escolha = item.dataset.ordenar;
+      ordenacaoAtual = ordenacaoAtual === escolha ? null : escolha;
+      ordenarDropdown.hidden = true;
+      btnOrdenar.setAttribute("aria-expanded", "false");
+      atualizar();
+    });
+  });
+
   atualizar();
 
   if (!tutorialVisto(TUTORIAL_CATALOGO_KEY)) {

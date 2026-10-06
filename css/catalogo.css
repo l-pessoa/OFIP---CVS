@@ -227,9 +227,79 @@
 .catalogo-busca {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 8px;
   padding: 12px 16px;
   background: var(--bg);
   transition: background-color .2s ease;
+}
+
+.ordenar-wrap {
+  position: relative;
+  flex: none;
+}
+
+.btn-ordenar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  transition: background-color .15s ease, color .15s ease;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.btn-ordenar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-ordenar.is-ativo {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+.ordenar-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 3;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 190px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .2);
+}
+
+.ordenar-item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--text);
+  font-family: "Abhaya Libre", serif;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+  touch-action: manipulation;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.ordenar-item:hover {
+  background: var(--field-bg);
+}
+
+.ordenar-item.is-ativo {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .catalogo-busca.tem-categoria {
