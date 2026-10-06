@@ -35,9 +35,9 @@ const PASSOS_TUTORIAL_CATALOGO = [
     texto: "Toque pra trocar a aparência do app entre claro e escuro.",
   },
   {
-    seletor: null,
+    seletor: "#menu-toggle",
     titulo: "Menu",
-    texto: "Toque na aba Favoritos ou no botão ☰ que aparece lá em cima pra achar a área de Maestros (se tiver acesso), esse tutorial de novo e a opção de sair da conta.",
+    texto: "Aqui você encontra a área de Maestros (se tiver acesso), esse tutorial de novo quando quiser, e a opção de sair da conta.",
   },
 ];
 
@@ -133,6 +133,10 @@ function agruparPorCategoria(hinos) {
     grupos.get(nome).push(hino);
   }
   return grupos;
+}
+
+function svgPartitura() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>';
 }
 
 function svgFechar() {
@@ -471,7 +475,7 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
     </div>
     <div class="hino-naipes">${renderNaipeChips(hino, naipeDoUsuario)}</div>
     <div class="hino-detalhes" hidden>
-      ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">Visualizar partitura</button>` : ""}
+      ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">${svgPartitura()}Visualizar partitura</button>` : ""}
       ${
         hino.link_mp3
           ? `<div class="audio-player">

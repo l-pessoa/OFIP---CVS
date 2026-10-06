@@ -14,26 +14,26 @@
 <body>
   <div class="fundo-textura" aria-hidden="true"></div>
   <header class="catalogo-header">
-    <div class="catalogo-header-top">
-      <div class="menu-wrap">
-        <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <div class="menu-wrap">
+      <button type="button" id="menu-toggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="menu-dropdown" id="menu-dropdown" hidden>
+        <button type="button" id="menu-tutorial" class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 4.8 1c0 1.5-2 2-2.3 3.2"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Como usar</span>
         </button>
-        <div class="menu-dropdown" id="menu-dropdown" hidden>
-          <button type="button" id="menu-tutorial" class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 4.8 1c0 1.5-2 2-2.3 3.2"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span>Como usar</span>
-          </button>
-          <a href="admin.html" class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4 18l-1-9 5 4 4-6 4 6 5-4-1 9"/></svg>
-            <span>Maestros</span>
-          </a>
-          <button type="button" id="menu-sair" class="menu-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            <span>Sair</span>
-          </button>
-        </div>
+        <a href="admin.html" class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4 18l-1-9 5 4 4-6 4 6 5-4-1 9"/></svg>
+          <span>Maestros</span>
+        </a>
+        <button type="button" id="menu-sair" class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Sair</span>
+        </button>
       </div>
+    </div>
+    <div class="catalogo-header-top">
       <img class="catalogo-logo" src="../assets/logo/logo-combinado.png" alt="Coral Vozes de Sião / Orquestra Filarmônica Petrus" />
       <p class="catalogo-usuario" id="usuario-info"></p>
     </div>

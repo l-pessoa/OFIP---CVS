@@ -28,6 +28,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-left: 44px;
   margin-bottom: 8px;
 }
 
@@ -47,8 +48,11 @@
   width: auto;
 }
 
-.menu-wrap {
-  position: relative;
+.catalogo-header > .menu-wrap {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 2;
 }
 
 .menu-toggle {
@@ -163,7 +167,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 18px 20px 0;
+  padding: 50px 20px 0;
 }
 
 .cena-icone-mini {
@@ -472,17 +476,35 @@
 .hino-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border: none;
-  background: none;
-  padding: 0;
-  color: var(--accent-dark);
+  border-radius: 10px;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #FFFFFF;
   font-family: "Abhaya Libre", serif;
   font-weight: 700;
   font-size: 14px;
   text-decoration: none;
   touch-action: manipulation;
+  transition: background-color .15s ease, transform .1s ease;
   cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.hino-link svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.hino-link:active {
+  transform: scale(.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hino-link:hover {
+    background: var(--accent-dark);
+  }
 }
 
 .audio-player {
