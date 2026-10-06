@@ -1,5 +1,6 @@
 import { listarHinos, API_BASE } from "./api.js";
 import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
+import { ICONES_NAIPE_CORAL } from "./naipes.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -288,8 +289,8 @@ function initVisualizador() {
   modal.innerHTML = `
     <div class="visualizador-topo">
       <span class="visualizador-titulo" id="visualizador-titulo"></span>
-      <a class="visualizador-imprimir" target="_blank" rel="noopener" aria-label="Abrir pra imprimir">${svgImprimir()}</a>
-      <a class="visualizador-baixar" download aria-label="Baixar PDF">${svgBaixar()}</a>
+      <button type="button" class="visualizador-imprimir" aria-label="Imprimir">${svgImprimir()}</button>
+      <a class="visualizador-baixar" aria-label="Baixar PDF">${svgBaixar()}</a>
       <button type="button" class="visualizador-fechar" aria-label="Fechar">${svgFechar()}</button>
     </div>
     <div class="visualizador-paginas" id="visualizador-paginas"></div>
@@ -299,8 +300,11 @@ function initVisualizador() {
   const paginas = modal.querySelector("#visualizador-paginas");
   const titulo = modal.querySelector("#visualizador-titulo");
   const linkBaixar = modal.querySelector(".visualizador-baixar");
-  const linkImprimir = modal.querySelector(".visualizador-imprimir");
+  const btnImprimir = modal.querySelector(".visualizador-imprimir");
   let wakeLock = null;
+  let blobUrlAtual = null;
+
+  btnImprimir.addEventListener("click", () => window.print());
 
   async function pedirWakeLock() {
     if (!("wakeLock" in navigator)) return;
@@ -344,11 +348,21 @@ function initVisualizador() {
     }
   });
 
-  async function renderizarPdf(urlPdf) {
+  async function renderizarPdf(urlPdf, tituloHino) {
     paginas.innerHTML = '<p class="visualizador-carregando">Carregando partitura...</p>';
+    linkBaixar.removeAttribute("href");
     try {
+      const resposta = await fetch(urlPdf);
+      if (!resposta.ok) throw new Error("pdf indisponível");
+      const bytes = await resposta.arrayBuffer();
+
+      if (blobUrlAtual) URL.revokeObjectURL(blobUrlAtual);
+      blobUrlAtual = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+      linkBaixar.href = blobUrlAtual;
+      linkBaixar.download = `${tituloHino}.pdf`;
+
       const pdfjsLib = await carregarPdfJs();
-      const documento = await pdfjsLib.getDocument(urlPdf).promise;
+      const documento = await pdfjsLib.getDocument({ data: bytes }).promise;
       paginas.innerHTML = "";
       const larguraAlvo = paginas.clientWidth - 24;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -365,20 +379,17 @@ function initVisualizador() {
         await pagina.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
       }
     } catch {
-      paginas.innerHTML = '<p class="visualizador-carregando">Não deu pra carregar a partitura aqui. Tenta baixar pelo botão acima.</p>';
+      paginas.innerHTML = '<p class="visualizador-carregando">Não deu pra carregar a partitura aqui. Confira sua conexão e tenta de novo.</p>';
     }
   }
 
   return function abrir(idArquivo, tituloHino) {
     titulo.textContent = tituloHino;
     const urlPdf = `${API_BASE}/pdf?id=${idArquivo}`;
-    linkBaixar.href = urlPdf;
-    linkBaixar.download = `${tituloHino}.pdf`;
-    linkImprimir.href = urlPdf;
     modal.hidden = false;
     history.pushState({ visualizador: true }, "");
     pedirWakeLock();
-    renderizarPdf(urlPdf);
+    renderizarPdf(urlPdf, tituloHino);
   };
 }
 
@@ -393,7 +404,8 @@ function renderNaipeChips(hino, naipeDoUsuario) {
   const chips = visiveis
     .map((p) => {
       const destaque = p.naipe === naipeDoUsuario ? " is-do-usuario" : "";
-      return `<span class="naipe-chip${destaque}">${p.naipe}</span>`;
+      const icone = ICONES_NAIPE_CORAL[p.naipe] ?? "";
+      return `<span class="naipe-chip${destaque}">${icone}${p.naipe}</span>`;
     })
     .join("");
   const mais = resto > 0 ? `<span class="naipe-chip naipe-chip-mais">+${resto}</span>` : "";
@@ -554,9 +566,8 @@ async function init() {
 
     const buscaWrap = document.querySelector(".catalogo-busca");
     if (cena) {
+      document.body.style.setProperty("--cena-cor", cena.corCena);
       pauta.classList.add("tem-cena");
-      pauta.style.setProperty("--cena-cor", cena.corCena);
-      buscaWrap.style.setProperty("--cena-cor", cena.corCena);
       buscaWrap.classList.add("tem-categoria");
       marcaDagua.className = "categoria-marca-dagua tem-cena";
       marcaDagua.innerHTML = `
@@ -569,10 +580,9 @@ async function init() {
         </div>
       `;
     } else {
+      document.body.style.removeProperty("--cena-cor");
       pauta.classList.remove("tem-cena");
-      pauta.style.removeProperty("--cena-cor");
       buscaWrap.classList.remove("tem-categoria");
-      buscaWrap.style.removeProperty("--cena-cor");
       marcaDagua.className = "categoria-marca-dagua";
       marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
     }

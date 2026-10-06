@@ -31,3 +31,14 @@ export const NAIPES = {
   ],
   coral: ["Soprano", "Contralto", "Tenor", "Baixo"],
 };
+
+// Ícone por naipe do coral: uma pauta de 4 linhas com a nota marcando a
+// faixa daquela voz (soprano aguda no topo, baixo grave embaixo) — reusa
+// o motivo de pauta/partitura já presente no resto do site em vez de
+// inventar um símbolo novo de "voz".
+export const ICONES_NAIPE_CORAL = {
+  Soprano: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 15h18M3 20h18"/><circle cx="12" cy="5" r="2.3" fill="currentColor" stroke="none"/></svg>`,
+  Contralto: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 15h18M3 20h18"/><circle cx="12" cy="10" r="2.3" fill="currentColor" stroke="none"/></svg>`,
+  Tenor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 15h18M3 20h18"/><circle cx="12" cy="15" r="2.3" fill="currentColor" stroke="none"/></svg>`,
+  Baixo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 15h18M3 20h18"/><circle cx="12" cy="20" r="2.3" fill="currentColor" stroke="none"/></svg>`,
+};

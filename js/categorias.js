@@ -34,6 +34,8 @@ const SILHUETA_RAIOS = `<path d="M0,22 L6,2 L12,22 L18,10 L24,22 L30,4 L36,22 L4
 const SILHUETA_COROA = `<path d="M0,22 L7,3 L14,22 L21,14 L28,22 L35,1 L42,22 L49,17 L56,22 L63,3 L70,22 L77,14 L84,22 L91,1 L98,22 L105,17 L112,22 L119,3 L126,22 L133,14 L140,22 L147,1 L154,22 L161,17 L168,22 L175,3 L182,22 L189,14 L196,22 L203,3 L210,22Z" vector-effect="non-scaling-stroke"/>`;
 // Pétalas — bolhas arredondadas repetindo, clima floral suave.
 const SILHUETA_PETALAS = `<path d="M0,22 Q5,8 9,9 Q13,8 18,22 Q23,8 27,9 Q31,8 36,22 Q41,8 45,9 Q49,8 54,22 Q59,8 63,9 Q67,8 72,22 Q77,8 81,9 Q85,8 90,22 Q95,8 99,9 Q103,8 108,22 Q113,8 117,9 Q121,8 126,22 Q131,8 135,9 Q139,8 144,22 Q149,8 153,9 Q157,8 162,22 Q167,8 171,9 Q175,8 180,22 Q185,8 189,9 Q193,8 198,22Z"/>`;
+// Pontinhos espalhados — neutro, pra "Outros" não repetir a montanha padrão.
+const SILHUETA_PONTOS = `<path d="M4,14m-1.4,0a1.4,1.4 0 1,0 2.8,0a1.4,1.4 0 1,0 -2.8,0 M17,19m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M28,19m-1.4,0a1.4,1.4 0 1,0 2.8,0a1.4,1.4 0 1,0 -2.8,0 M43,19m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M53,14m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0 M64,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M78,14m-1.4,0a1.4,1.4 0 1,0 2.8,0a1.4,1.4 0 1,0 -2.8,0 M93,17m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M107,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M117,16m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M128,19m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M144,14m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0 M157,19m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M171,18m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0 M184,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M197,17m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0"/>`;
 
 export const CATEGORIAS = [
   {
@@ -93,6 +95,7 @@ export const CATEGORIAS = [
     nome: "Outros",
     cor: "#833700",
     corCena: "#332014",
+    silhueta: SILHUETA_PONTOS,
     motivo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.5"/><path d="M9.5 18V5l8-2v11"/></svg>`,
   },
 ];

@@ -424,6 +424,9 @@
 }
 
 .naipe-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 3px 10px;
   border-radius: 12px;
   background: var(--field-bg);
@@ -431,6 +434,13 @@
   font-family: "Abhaya Libre", serif;
   font-size: 13px;
   opacity: .75;
+}
+
+.naipe-chip svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  stroke: currentColor;
 }
 
 .naipe-chip.is-do-usuario {
@@ -679,13 +689,13 @@
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
-  touch-action: pan-y;
+  touch-action: pan-y pinch-zoom;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   padding: 12px;
-  background: #3A3A3A;
+  background: var(--bg);
 }
 
 .visualizador-pagina {
@@ -697,11 +707,40 @@
 
 .visualizador-carregando {
   margin: auto;
-  color: #FFFFFF;
+  color: var(--text);
   font-family: "Abhaya Libre", serif;
   font-size: 15px;
   text-align: center;
   padding: 20px;
+}
+
+@media print {
+  body > *:not(.visualizador-modal) {
+    display: none !important;
+  }
+
+  .visualizador-modal {
+    position: static;
+    height: auto;
+    background: #FFFFFF;
+  }
+
+  .visualizador-topo {
+    display: none !important;
+  }
+
+  .visualizador-paginas {
+    overflow: visible;
+    height: auto;
+    background: #FFFFFF;
+    padding: 0;
+  }
+
+  .visualizador-pagina {
+    box-shadow: none;
+    max-width: 100%;
+    break-after: page;
+  }
 }
 
 .hino-vazio,
