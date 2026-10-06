@@ -552,19 +552,27 @@ async function init() {
     const pauta = document.querySelector(".catalogo-pauta");
     const cena = categoriaAtiva && categoriaAtiva !== FAVORITOS.nome ? cenaDaCategoria(categoriaAtiva) : null;
 
+    const buscaWrap = document.querySelector(".catalogo-busca");
     if (cena) {
       pauta.classList.add("tem-cena");
       pauta.style.setProperty("--cena-cor", cena.corCena);
+      buscaWrap.style.setProperty("--cena-cor", cena.corCena);
+      buscaWrap.classList.add("tem-categoria");
       marcaDagua.className = "categoria-marca-dagua tem-cena";
       marcaDagua.innerHTML = `
         <span class="cena-icone cena-icone-eco">${motivoDaCategoria(categoriaAtiva)}</span>
         <span class="cena-icone">${motivoDaCategoria(categoriaAtiva)}</span>
         <svg class="cena-silhueta" viewBox="0 0 200 24" preserveAspectRatio="none">${cena.silhueta}</svg>
-        <span class="cena-nome">${categoriaAtiva}</span>
+        <div class="cena-topo">
+          <span class="cena-icone-mini">${motivoDaCategoria(categoriaAtiva)}</span>
+          <span class="cena-nome">${categoriaAtiva}</span>
+        </div>
       `;
     } else {
       pauta.classList.remove("tem-cena");
       pauta.style.removeProperty("--cena-cor");
+      buscaWrap.classList.remove("tem-categoria");
+      buscaWrap.style.removeProperty("--cena-cor");
       marcaDagua.className = "categoria-marca-dagua";
       marcaDagua.innerHTML = categoriaAtiva === FAVORITOS.nome ? FAVORITOS.icone : motivoDaCategoria(categoriaAtiva);
     }
