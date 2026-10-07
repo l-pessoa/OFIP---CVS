@@ -5,7 +5,8 @@
 }
 
 .admin-card {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--field-bg) 6%, var(--surface));
+  border: 1px solid var(--field-bg);
   border-radius: 14px;
   padding: 24px 20px;
   box-shadow: 0 2px 20px rgba(0, 0, 0, .08);

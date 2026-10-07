@@ -589,34 +589,80 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
   return article;
 }
 
+function svgMais() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>';
+}
+
+const LIMITE_ABAS_PRIMARIAS = 3;
+
 function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   const nav = document.getElementById("categoria-nav");
   nav.innerHTML = "";
 
-  const favBtn = document.createElement("button");
-  favBtn.type = "button";
-  favBtn.className = "categoria-chip categoria-chip-favoritos" + (categoriaAtiva === FAVORITOS.nome ? " is-ativa" : "");
-  favBtn.style.setProperty("--chip-cor", FAVORITOS.cor);
-  favBtn.innerHTML = `${FAVORITOS.icone}<span>${FAVORITOS.nome}</span>`;
+  function criarChip(classeExtra, cor, icone, texto, ativa) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "categoria-chip" + classeExtra + (ativa ? " is-ativa" : "");
+    btn.innerHTML = `${icone}<span>${texto}</span>`;
+    btn.style.setProperty("--chip-cor", cor);
+    return btn;
+  }
+
+  const favBtn = criarChip(" categoria-chip-favoritos", FAVORITOS.cor, FAVORITOS.icone, FAVORITOS.nome, categoriaAtiva === FAVORITOS.nome);
   favBtn.addEventListener("click", () => {
     vibrar();
     onSelecionar(FAVORITOS.nome);
   });
   nav.appendChild(favBtn);
 
-  for (const nome of categoriasComHinos) {
-    const cor = corDaCategoria(nome);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "categoria-chip" + (nome === categoriaAtiva ? " is-ativa" : "");
-    btn.innerHTML = `${motivoDaCategoria(nome)}<span>${nome}</span>`;
-    btn.style.setProperty("--chip-cor", cor);
+  const primarias = categoriasComHinos.slice(0, LIMITE_ABAS_PRIMARIAS);
+  const resto = categoriasComHinos.slice(LIMITE_ABAS_PRIMARIAS);
+
+  for (const nome of primarias) {
+    const btn = criarChip("", corDaCategoria(nome), motivoDaCategoria(nome), nome, nome === categoriaAtiva);
     btn.addEventListener("click", () => {
       vibrar();
       onSelecionar(nome);
     });
     nav.appendChild(btn);
   }
+
+  if (resto.length === 0) return;
+
+  const restoAtivo = resto.includes(categoriaAtiva);
+  const maisWrap = document.createElement("div");
+  maisWrap.className = "categoria-mais-wrap";
+
+  const maisBtn = criarChip("", "var(--text-secondary)", svgMais(), "Mais", restoAtivo);
+  maisWrap.appendChild(maisBtn);
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "categoria-mais-dropdown";
+  dropdown.hidden = true;
+  for (const nome of resto) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "categoria-mais-item" + (nome === categoriaAtiva ? " is-ativa" : "");
+    item.innerHTML = `${motivoDaCategoria(nome)}<span>${nome}</span>`;
+    item.style.setProperty("--chip-cor", corDaCategoria(nome));
+    item.addEventListener("click", () => {
+      vibrar();
+      dropdown.hidden = true;
+      onSelecionar(nome);
+    });
+    dropdown.appendChild(item);
+  }
+  maisWrap.appendChild(dropdown);
+
+  maisBtn.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    dropdown.hidden = !dropdown.hidden;
+  });
+  document.addEventListener("click", () => {
+    dropdown.hidden = true;
+  });
+
+  nav.appendChild(maisWrap);
 }
 
 function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador) {
