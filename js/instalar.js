@@ -17,7 +17,10 @@ function jaInstalado() {
 }
 
 function ehIOS() {
-  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent)) return true;
+  // iPadOS 13+ manda user-agent de Mac por padrão — só dá pra diferenciar
+  // de um Mac de verdade pela tela sensível ao toque.
+  return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
 }
 
 export function convidarInstalar() {
