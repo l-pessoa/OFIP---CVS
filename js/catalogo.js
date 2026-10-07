@@ -4,7 +4,7 @@ import { ICONES_NAIPE_CORAL } from "./naipes.js";
 import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
 import { convidarInstalar, inicializarBotaoMenuInstalar } from "./instalar.js";
 import { inicializarBotaoNotificacoes } from "./notificacoes.js";
-import { registrarServiceWorker } from "./sw-registro.js";
+import { observarAtualizacaoServiceWorker } from "./sw-registro.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -942,5 +942,5 @@ function montarCatalogo(todosOsHinos, usuario, abrirVisualizador) {
   }
 }
 
-registrarServiceWorker("../sw.js");
+observarAtualizacaoServiceWorker();
 init();
