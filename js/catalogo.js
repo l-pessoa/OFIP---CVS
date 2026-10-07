@@ -9,6 +9,7 @@ const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
 const FAVORITOS_KEY = "ofipCvsFavoritos";
 const TUTORIAL_CATALOGO_KEY = "ofipCvsTutorialCatalogo";
+const HINOS_VISTOS_KEY = "ofipCvsHinosVistos";
 
 const PASSOS_TUTORIAL_CATALOGO = [
   {
@@ -120,6 +121,35 @@ function toggleFavorito(id) {
     atuais.add(id);
   }
   localStorage.setItem(FAVORITOS_KEY, JSON.stringify([...atuais]));
+}
+
+// null = esse aparelho nunca abriu o catálogo ainda. Nesse caso o hino
+// "novo" vira o próprio hino que já existia no primeiro carregamento —
+// senão todo mundo que atualizasse o app veria o catálogo inteiro como
+// novo de uma vez só.
+function getHinosVistos() {
+  const raw = localStorage.getItem(HINOS_VISTOS_KEY);
+  if (raw === null) return null;
+  try {
+    return new Set(JSON.parse(raw));
+  } catch {
+    return new Set();
+  }
+}
+
+function salvarHinosVistos(vistos) {
+  localStorage.setItem(HINOS_VISTOS_KEY, JSON.stringify([...vistos]));
+}
+
+function marcarComoVistos(ids, vistos) {
+  let mudou = false;
+  for (const id of ids) {
+    if (!vistos.has(id)) {
+      vistos.add(id);
+      mudou = true;
+    }
+  }
+  if (mudou) salvarHinosVistos(vistos);
 }
 
 function corDaCategoria(nome) {
@@ -521,7 +551,7 @@ function renderNaipeChips(hino, naipeDoUsuario) {
   return chips + mais;
 }
 
-function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador) {
+function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador, ehNovo) {
   const cor = corDaCategoria(hino.hino_categoria);
   const ehFavorito = favoritoIds.has(hino.id);
   const article = document.createElement("article");
@@ -533,6 +563,7 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
     <div class="hino-card-header">
       <button type="button" class="hino-card-toggle" aria-expanded="false">
         <span class="hino-titulo">${hino.hino_titulo}</span>
+        ${ehNovo ? `<span class="hino-tag-novo">Novo</span>` : ""}
         ${hino.hino_numero_harpa ? `<span class="hino-numero">${hino.hino_numero_harpa}</span>` : ""}
       </button>
       <button type="button" class="favorito-btn${ehFavorito ? " is-favorito" : ""}" aria-pressed="${ehFavorito}" aria-label="Favoritar hino">
@@ -606,7 +637,7 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
   return article;
 }
 
-function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
+function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar, categoriasComNovo) {
   const nav = document.getElementById("categoria-nav");
   nav.innerHTML = "";
 
@@ -628,6 +659,12 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
 
   for (const nome of categoriasComHinos) {
     const btn = criarChip("", corDaCategoria(nome), motivoDaCategoria(nome), nome, nome === categoriaAtiva);
+    if (categoriasComNovo?.has(nome)) {
+      const bolinha = document.createElement("span");
+      bolinha.className = "categoria-chip-bolinha";
+      bolinha.setAttribute("aria-hidden", "true");
+      btn.appendChild(bolinha);
+    }
     btn.addEventListener("click", () => {
       vibrar();
       onSelecionar(nome);
@@ -636,7 +673,7 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   }
 }
 
-function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador) {
+function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador, ehNovo) {
   const lista = document.getElementById("hino-lista");
   lista.innerHTML = "";
   if (hinos.length === 0) {
@@ -652,7 +689,7 @@ function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggl
     return;
   }
   for (const hino of hinos) {
-    lista.appendChild(renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador));
+    lista.appendChild(renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVisualizador, ehNovo?.(hino)));
   }
 }
 
@@ -669,17 +706,42 @@ async function init() {
   document.getElementById("usuario-info").textContent = `${usuario.nome} — ${usuario.naipe}`;
 
   const carregando = document.getElementById("carregando");
-  let todosOsHinos = [];
-  try {
-    todosOsHinos = await listarHinos({ naipe: usuario.naipe });
-  } catch (erro) {
-    carregando.textContent = "Não deu pra carregar os hinos agora. Tenta recarregar a página.";
-    return;
-  }
-  carregando.remove();
 
+  async function carregarEMontar() {
+    carregando.hidden = false;
+    carregando.textContent = "Carregando hinos...";
+    let todosOsHinos;
+    try {
+      todosOsHinos = await listarHinos({ naipe: usuario.naipe });
+    } catch (erro) {
+      carregando.textContent = "Não deu pra carregar os hinos agora. ";
+      const btnTentar = document.createElement("button");
+      btnTentar.type = "button";
+      btnTentar.className = "carregando-btn-tentar";
+      btnTentar.textContent = "Tentar de novo";
+      btnTentar.addEventListener("click", carregarEMontar);
+      carregando.appendChild(btnTentar);
+      return;
+    }
+    carregando.remove();
+    montarCatalogo(todosOsHinos, usuario, abrirVisualizador);
+  }
+
+  await carregarEMontar();
+}
+
+function montarCatalogo(todosOsHinos, usuario, abrirVisualizador) {
   const grupos = agruparPorCategoria(todosOsHinos);
   const categoriasComHinos = [...grupos.keys()].filter((nome) => grupos.get(nome).length > 0);
+
+  let hinosVistos = getHinosVistos();
+  if (hinosVistos === null) {
+    // primeira vez que esse aparelho abre o catálogo: ninguém cadastrado
+    // até agora é "novo" — só os hinos que forem adicionados daqui pra frente.
+    hinosVistos = new Set(todosOsHinos.map((h) => h.id));
+    salvarHinosVistos(hinosVistos);
+  }
+  const ehNovo = (hino) => !hinosVistos.has(hino.id);
 
   let categoriaAtiva = categoriasComHinos[0] ?? null;
   let ordenacaoAtual = null;
@@ -698,11 +760,31 @@ async function init() {
     return copia;
   }
 
+  // Hino novo sempre aparece primeiro, não importa a ordenação escolhida —
+  // só deixa de "furar fila" quando a pessoa visita a categoria dele (ver
+  // o fim de atualizar()).
+  function comNovosNoTopo(lista) {
+    if (categoriaAtiva === FAVORITOS.nome) return lista;
+    const novos = lista.filter(ehNovo);
+    if (novos.length === 0) return lista;
+    const resto = lista.filter((h) => !ehNovo(h));
+    novos.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+    return [...novos, ...resto];
+  }
+
   function atualizar() {
-    renderCategoriaNav(categoriasComHinos, categoriaAtiva, (nome) => {
-      categoriaAtiva = nome;
-      atualizar();
-    });
+    const categoriasComNovo = new Set(
+      categoriasComHinos.filter((nome) => (grupos.get(nome) ?? []).some(ehNovo))
+    );
+    renderCategoriaNav(
+      categoriasComHinos,
+      categoriaAtiva,
+      (nome) => {
+        categoriaAtiva = nome;
+        atualizar();
+      },
+      categoriasComNovo
+    );
 
     const marcaDagua = document.getElementById("categoria-marca-dagua");
     const pauta = document.querySelector(".catalogo-pauta");
@@ -754,12 +836,26 @@ async function init() {
             String(h.hino_numero_harpa ?? "").includes(termoBusca)
         )
       : hinosDaCategoria;
-    renderLista(ordenarHinos(filtrados), usuario.naipe, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador);
+    renderLista(
+      comNovosNoTopo(ordenarHinos(filtrados)),
+      usuario.naipe,
+      categoriaAtiva,
+      favoritoIds,
+      onToggleFavorito,
+      abrirVisualizador,
+      ehNovo
+    );
 
     document.querySelectorAll(".ordenar-item").forEach((item) => {
       item.classList.toggle("is-ativo", item.dataset.ordenar === ordenacaoAtual);
     });
     document.getElementById("btn-ordenar").classList.toggle("is-ativo", !!ordenacaoAtual);
+
+    // Visitar a categoria "lê" as notificações dela: o próximo atualizar()
+    // já não vai mais mostrar a bolinha nem furar fila pra esses hinos.
+    if (categoriaAtiva && categoriaAtiva !== FAVORITOS.nome) {
+      marcarComoVistos((grupos.get(categoriaAtiva) ?? []).map((h) => h.id), hinosVistos);
+    }
   }
 
   document.getElementById("busca").addEventListener("input", atualizar);

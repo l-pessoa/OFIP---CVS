@@ -364,6 +364,7 @@
 }
 
 .categoria-chip {
+  position: relative;
   flex: none;
   display: flex;
   flex-direction: column;
@@ -380,6 +381,17 @@
   font-size: 13px;
   white-space: nowrap;
   cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.categoria-chip-bolinha {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--erro);
+  box-shadow: 0 0 0 2px var(--bg);
 }
 
 .categoria-chip svg {
@@ -493,6 +505,19 @@
   font-weight: 700;
   font-size: clamp(16px, 4vw, 19px);
   color: var(--text);
+}
+
+.hino-tag-novo {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-family: "Abhaya Libre", serif;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
 }
 
 .hino-numero {
@@ -901,6 +926,31 @@
   font-family: "Abhaya Libre", serif;
   font-size: 15px;
   padding: 40px 20px;
+}
+
+.carregando-btn-tentar {
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-family: "Abhaya Libre", serif;
+  font-weight: 700;
+  font-size: 14px;
+  touch-action: manipulation;
+  transition: background-color .15s ease, transform .1s ease;
+  cursor: url("../assets/icons/cursor-note.svg") 4 20, pointer;
+}
+
+.carregando-btn-tentar:active {
+  transform: scale(.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .carregando-btn-tentar:hover {
+    background: var(--accent-dark);
+  }
 }
 
 @media (min-width: 768px) {
