@@ -164,6 +164,10 @@ function svgImprimir() {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>';
 }
 
+function svgTelaCheia() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/></svg>';
+}
+
 let pdfjsCarregando = null;
 function carregarPdfJs() {
   if (pdfjsCarregando) return pdfjsCarregando;
@@ -345,6 +349,7 @@ function initVisualizador() {
   modal.innerHTML = `
     <div class="visualizador-topo">
       <span class="visualizador-titulo" id="visualizador-titulo"></span>
+      <button type="button" class="visualizador-tela-cheia" aria-label="Tela cheia">${svgTelaCheia()}</button>
       <button type="button" class="visualizador-imprimir" aria-label="Imprimir">${svgImprimir()}</button>
       <a class="visualizador-baixar" aria-label="Baixar PDF">${svgBaixar()}</a>
       <button type="button" class="visualizador-fechar" aria-label="Fechar">${svgFechar()}</button>
@@ -357,8 +362,17 @@ function initVisualizador() {
   const titulo = modal.querySelector("#visualizador-titulo");
   const linkBaixar = modal.querySelector(".visualizador-baixar");
   const btnImprimir = modal.querySelector(".visualizador-imprimir");
+  const btnTelaCheia = modal.querySelector(".visualizador-tela-cheia");
   let wakeLock = null;
   let blobUrlAtual = null;
+
+  btnTelaCheia.addEventListener("click", () => {
+    modal.classList.add("tela-cheia");
+  });
+
+  paginas.addEventListener("click", () => {
+    modal.classList.remove("tela-cheia");
+  });
 
   btnImprimir.addEventListener("click", () => window.print());
 
@@ -386,6 +400,7 @@ function initVisualizador() {
 
   function iniciarFechamento() {
     modal.classList.remove("aberto");
+    modal.classList.remove("tela-cheia");
     liberarWakeLock();
     const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setTimeout(() => {
@@ -589,12 +604,6 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
   return article;
 }
 
-function svgMais() {
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>';
-}
-
-const LIMITE_ABAS_PRIMARIAS = 3;
-
 function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   const nav = document.getElementById("categoria-nav");
   nav.innerHTML = "";
@@ -615,10 +624,7 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   });
   nav.appendChild(favBtn);
 
-  const primarias = categoriasComHinos.slice(0, LIMITE_ABAS_PRIMARIAS);
-  const resto = categoriasComHinos.slice(LIMITE_ABAS_PRIMARIAS);
-
-  for (const nome of primarias) {
+  for (const nome of categoriasComHinos) {
     const btn = criarChip("", corDaCategoria(nome), motivoDaCategoria(nome), nome, nome === categoriaAtiva);
     btn.addEventListener("click", () => {
       vibrar();
@@ -626,43 +632,6 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
     });
     nav.appendChild(btn);
   }
-
-  if (resto.length === 0) return;
-
-  const restoAtivo = resto.includes(categoriaAtiva);
-  const maisWrap = document.createElement("div");
-  maisWrap.className = "categoria-mais-wrap";
-
-  const maisBtn = criarChip("", "var(--text-secondary)", svgMais(), "Mais", restoAtivo);
-  maisWrap.appendChild(maisBtn);
-
-  const dropdown = document.createElement("div");
-  dropdown.className = "categoria-mais-dropdown";
-  dropdown.hidden = true;
-  for (const nome of resto) {
-    const item = document.createElement("button");
-    item.type = "button";
-    item.className = "categoria-mais-item" + (nome === categoriaAtiva ? " is-ativa" : "");
-    item.innerHTML = `${motivoDaCategoria(nome)}<span>${nome}</span>`;
-    item.style.setProperty("--chip-cor", corDaCategoria(nome));
-    item.addEventListener("click", () => {
-      vibrar();
-      dropdown.hidden = true;
-      onSelecionar(nome);
-    });
-    dropdown.appendChild(item);
-  }
-  maisWrap.appendChild(dropdown);
-
-  maisBtn.addEventListener("click", (evento) => {
-    evento.stopPropagation();
-    dropdown.hidden = !dropdown.hidden;
-  });
-  document.addEventListener("click", () => {
-    dropdown.hidden = true;
-  });
-
-  nav.appendChild(maisWrap);
 }
 
 function renderLista(hinos, naipeDoUsuario, categoriaAtiva, favoritoIds, onToggleFavorito, abrirVisualizador) {
