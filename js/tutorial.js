@@ -15,7 +15,7 @@ export function marcarTutorialVisto(chave) {
   localStorage.setItem(chave, "1");
 }
 
-export function iniciarTutorial(chave, passos) {
+export function iniciarTutorial(chave, passos, aoFinalizar) {
   if (!passos || passos.length === 0) return;
 
   const overlay = document.createElement("div");
@@ -67,6 +67,7 @@ export function iniciarTutorial(chave, passos) {
     cartao.remove();
     window.removeEventListener("resize", aoRedimensionar);
     marcarTutorialVisto(chave);
+    aoFinalizar?.();
   }
 
   function mostrarPasso() {

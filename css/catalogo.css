@@ -1,3 +1,19 @@
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: .22s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 .fundo-textura {
   position: fixed;
   inset: 0;
@@ -530,17 +546,35 @@
 }
 
 .hino-detalhes {
-  display: none;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .25s ease;
+}
+
+.hino-detalhes[hidden] {
+  display: grid;
+}
+
+.hino-detalhes:not([hidden]) {
+  grid-template-rows: 1fr;
+}
+
+.hino-detalhes-inner {
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
+  min-height: 0;
+  overflow: hidden;
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--field-bg);
 }
 
-.hino-detalhes:not([hidden]) {
-  display: flex;
+@media (prefers-reduced-motion: reduce) {
+  .hino-detalhes {
+    transition: none;
+  }
 }
 
 .hino-link {
@@ -706,10 +740,22 @@
   flex-direction: column;
   height: 100dvh;
   background: var(--bg);
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+.visualizador-modal.aberto {
+  transform: translateY(0);
 }
 
 .visualizador-modal[hidden] {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visualizador-modal {
+    transition: none;
+  }
 }
 
 .visualizador-topo {
@@ -721,6 +767,7 @@
   padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
   background: var(--surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+  touch-action: none;
 }
 
 .visualizador-titulo {

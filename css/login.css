@@ -6,6 +6,22 @@
    fill: the gradient background and the blob both stretch to fill the
    screen exactly, in any orientation, with zero cropping and zero margin. */
 
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: .22s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
 .login-panel {
   position: relative;
   width: 100%;

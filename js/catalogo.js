@@ -2,6 +2,8 @@ import { listarHinos, API_BASE } from "./api.js";
 import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
 import { ICONES_NAIPE_CORAL } from "./naipes.js";
 import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
+import { convidarInstalar } from "./instalar.js";
+import { registrarServiceWorker } from "./sw-registro.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -41,6 +43,10 @@ const PASSOS_TUTORIAL_CATALOGO = [
   },
 ];
 
+function vibrar(duracao = 10) {
+  navigator.vibrate?.(duracao);
+}
+
 function getUsuario() {
   const raw = localStorage.getItem(USER_KEY);
   if (!raw) return null;
@@ -51,13 +57,20 @@ function getUsuario() {
   }
 }
 
+function atualizarCorStatus(tema) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = tema === "dark" ? "#833700" : "#EF6400";
+}
+
 function initTheme() {
   const saved = localStorage.getItem(THEME_KEY) || "light";
   document.documentElement.dataset.theme = saved;
+  atualizarCorStatus(saved);
   document.getElementById("theme-toggle").addEventListener("click", () => {
     const atual = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = atual;
     localStorage.setItem(THEME_KEY, atual);
+    atualizarCorStatus(atual);
   });
 }
 
@@ -371,11 +384,19 @@ function initVisualizador() {
     }
   });
 
+  function iniciarFechamento() {
+    modal.classList.remove("aberto");
+    liberarWakeLock();
+    const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(() => {
+      modal.hidden = true;
+      paginas.innerHTML = "";
+    }, semMovimento ? 0 : 300);
+  }
+
   function fechar() {
     const estavaAberto = !modal.hidden;
-    modal.hidden = true;
-    paginas.innerHTML = "";
-    liberarWakeLock();
+    iniciarFechamento();
     if (estavaAberto && history.state && history.state.visualizador) {
       history.back();
     }
@@ -385,11 +406,38 @@ function initVisualizador() {
 
   window.addEventListener("popstate", () => {
     if (!modal.hidden) {
-      modal.hidden = true;
-      paginas.innerHTML = "";
-      liberarWakeLock();
+      iniciarFechamento();
     }
   });
+
+  const topo = modal.querySelector(".visualizador-topo");
+  let arrastoInicioY = null;
+
+  topo.addEventListener("pointerdown", (evento) => {
+    arrastoInicioY = evento.clientY;
+    modal.style.transition = "none";
+    topo.setPointerCapture(evento.pointerId);
+  });
+
+  topo.addEventListener("pointermove", (evento) => {
+    if (arrastoInicioY === null) return;
+    const delta = evento.clientY - arrastoInicioY;
+    if (delta > 0) modal.style.transform = `translateY(${delta}px)`;
+  });
+
+  function soltarArrastoModal(evento) {
+    if (arrastoInicioY === null) return;
+    const delta = evento.clientY - arrastoInicioY;
+    arrastoInicioY = null;
+    modal.style.transition = "";
+    modal.style.transform = "";
+    if (delta > 120) {
+      fechar();
+    }
+  }
+
+  topo.addEventListener("pointerup", soltarArrastoModal);
+  topo.addEventListener("pointercancel", soltarArrastoModal);
 
   async function renderizarPdf(urlPdf, tituloHino) {
     paginas.innerHTML = '<p class="visualizador-carregando">Carregando partitura...</p>';
@@ -430,6 +478,7 @@ function initVisualizador() {
     titulo.textContent = tituloHino;
     const urlPdf = `${API_BASE}/pdf?id=${idArquivo}`;
     modal.hidden = false;
+    requestAnimationFrame(() => modal.classList.add("aberto"));
     history.pushState({ visualizador: true }, "");
     pedirWakeLock();
     renderizarPdf(urlPdf, tituloHino);
@@ -475,26 +524,28 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
     </div>
     <div class="hino-naipes">${renderNaipeChips(hino, naipeDoUsuario)}</div>
     <div class="hino-detalhes" hidden>
-      ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">${svgPartitura()}Visualizar partitura</button>` : ""}
-      ${
-        hino.link_mp3
-          ? `<div class="audio-player">
-              <audio class="audio-elemento" preload="none"></audio>
-              <div class="audio-progresso" role="slider" aria-label="Posição do áudio" aria-valuemin="0" aria-valuemax="100">
-                <div class="audio-progresso-preenchido"></div>
-              </div>
-              <div class="audio-tempos">
-                <span class="audio-tempo-atual">0:00</span>
-                <span class="audio-tempo-total">0:00</span>
-              </div>
-              <div class="audio-controles">
-                <button type="button" class="audio-btn audio-voltar" aria-label="Voltar 10 segundos">${svgVoltar10()}</button>
-                <button type="button" class="audio-btn audio-play" aria-label="Tocar">${svgPlay()}</button>
-                <button type="button" class="audio-btn audio-avancar" aria-label="Avançar 10 segundos">${svgAvancar10()}</button>
-              </div>
-            </div>`
-          : ""
-      }
+      <div class="hino-detalhes-inner">
+        ${hino.link_pdf ? `<button type="button" class="hino-link hino-link-visualizar">${svgPartitura()}Visualizar partitura</button>` : ""}
+        ${
+          hino.link_mp3
+            ? `<div class="audio-player">
+                <audio class="audio-elemento" preload="none"></audio>
+                <div class="audio-progresso" role="slider" aria-label="Posição do áudio" aria-valuemin="0" aria-valuemax="100">
+                  <div class="audio-progresso-preenchido"></div>
+                </div>
+                <div class="audio-tempos">
+                  <span class="audio-tempo-atual">0:00</span>
+                  <span class="audio-tempo-total">0:00</span>
+                </div>
+                <div class="audio-controles">
+                  <button type="button" class="audio-btn audio-voltar" aria-label="Voltar 10 segundos">${svgVoltar10()}</button>
+                  <button type="button" class="audio-btn audio-play" aria-label="Tocar">${svgPlay()}</button>
+                  <button type="button" class="audio-btn audio-avancar" aria-label="Avançar 10 segundos">${svgAvancar10()}</button>
+                </div>
+              </div>`
+            : ""
+        }
+      </div>
     </div>
   `;
 
@@ -511,7 +562,19 @@ function renderCard(hino, naipeDoUsuario, favoritoIds, onToggleFavorito, abrirVi
     if (!aberto && audioPlayer) audioPlayer.carregarAudio();
   });
 
-  article.querySelector(".favorito-btn").addEventListener("click", () => {
+  const btnFavorito = article.querySelector(".favorito-btn");
+  btnFavorito.addEventListener("click", () => {
+    const agoraFavorito = !btnFavorito.classList.contains("is-favorito");
+    btnFavorito.classList.toggle("is-favorito", agoraFavorito);
+    btnFavorito.setAttribute("aria-pressed", String(agoraFavorito));
+    vibrar();
+    const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (agoraFavorito && !semMovimento) {
+      btnFavorito.animate(
+        [{ transform: "scale(1)" }, { transform: "scale(1.35)" }, { transform: "scale(1)" }],
+        { duration: 260, easing: "cubic-bezier(.34,1.56,.64,1)" }
+      );
+    }
     onToggleFavorito(hino.id);
   });
 
@@ -535,7 +598,10 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
   favBtn.className = "categoria-chip categoria-chip-favoritos" + (categoriaAtiva === FAVORITOS.nome ? " is-ativa" : "");
   favBtn.style.setProperty("--chip-cor", FAVORITOS.cor);
   favBtn.innerHTML = `${FAVORITOS.icone}<span>${FAVORITOS.nome}</span>`;
-  favBtn.addEventListener("click", () => onSelecionar(FAVORITOS.nome));
+  favBtn.addEventListener("click", () => {
+    vibrar();
+    onSelecionar(FAVORITOS.nome);
+  });
   nav.appendChild(favBtn);
 
   for (const nome of categoriasComHinos) {
@@ -545,7 +611,10 @@ function renderCategoriaNav(categoriasComHinos, categoriaAtiva, onSelecionar) {
     btn.className = "categoria-chip" + (nome === categoriaAtiva ? " is-ativa" : "");
     btn.innerHTML = `${motivoDaCategoria(nome)}<span>${nome}</span>`;
     btn.style.setProperty("--chip-cor", cor);
-    btn.addEventListener("click", () => onSelecionar(nome));
+    btn.addEventListener("click", () => {
+      vibrar();
+      onSelecionar(nome);
+    });
     nav.appendChild(btn);
   }
 }
@@ -651,7 +720,7 @@ async function init() {
     const favoritoIds = getFavoritoIds();
     const onToggleFavorito = (id) => {
       toggleFavorito(id);
-      atualizar();
+      if (categoriaAtiva === FAVORITOS.nome) atualizar();
     };
 
     const termoBusca = document.getElementById("busca").value.trim().toLowerCase();
@@ -703,11 +772,60 @@ async function init() {
     });
   });
 
+  function irParaAba(direcao) {
+    const abas = [FAVORITOS.nome, ...categoriasComHinos];
+    const indiceAtual = abas.indexOf(categoriaAtiva);
+    if (indiceAtual === -1) return;
+    const proximoIndice = indiceAtual + direcao;
+    if (proximoIndice < 0 || proximoIndice >= abas.length) return;
+    categoriaAtiva = abas[proximoIndice];
+    vibrar();
+    atualizar();
+  }
+
+  const areaSwipe = document.getElementById("hino-lista");
+  let swipeInicioX = null;
+  let swipeInicioY = null;
+  let swipeEhHorizontal = null;
+
+  areaSwipe.addEventListener("pointerdown", (evento) => {
+    if (evento.pointerType === "mouse" || evento.target.closest(".audio-progresso")) return;
+    swipeInicioX = evento.clientX;
+    swipeInicioY = evento.clientY;
+    swipeEhHorizontal = null;
+  });
+
+  areaSwipe.addEventListener("pointermove", (evento) => {
+    if (swipeInicioX === null) return;
+    const deltaX = evento.clientX - swipeInicioX;
+    const deltaY = evento.clientY - swipeInicioY;
+    if (swipeEhHorizontal === null && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+      swipeEhHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
+    }
+  });
+
+  function soltarSwipeCategoria(evento) {
+    if (swipeInicioX === null) return;
+    const deltaX = evento.clientX - swipeInicioX;
+    if (swipeEhHorizontal && Math.abs(deltaX) > 70) {
+      irParaAba(deltaX < 0 ? 1 : -1);
+    }
+    swipeInicioX = null;
+    swipeInicioY = null;
+    swipeEhHorizontal = null;
+  }
+
+  areaSwipe.addEventListener("pointerup", soltarSwipeCategoria);
+  areaSwipe.addEventListener("pointercancel", soltarSwipeCategoria);
+
   atualizar();
 
   if (!tutorialVisto(TUTORIAL_CATALOGO_KEY)) {
-    iniciarTutorial(TUTORIAL_CATALOGO_KEY, PASSOS_TUTORIAL_CATALOGO);
+    iniciarTutorial(TUTORIAL_CATALOGO_KEY, PASSOS_TUTORIAL_CATALOGO, convidarInstalar);
+  } else {
+    convidarInstalar();
   }
 }
 
+registrarServiceWorker("../sw.js");
 init();

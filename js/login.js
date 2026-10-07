@@ -1,4 +1,5 @@
 import { NAIPES } from "./naipes.js";
+import { registrarServiceWorker } from "./sw-registro.js";
 
 const THEME_KEY = "ofipCvsTema";
 const USER_KEY = "ofipCvsUsuario";
@@ -6,6 +7,8 @@ const USER_KEY = "ofipCvsUsuario";
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   localStorage.setItem(THEME_KEY, theme);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === "dark" ? "#833700" : "#EF6400";
 }
 
 function initTheme() {
@@ -87,6 +90,8 @@ function initForm() {
     window.location.href = "pages/principal.html";
   });
 }
+
+registrarServiceWorker("sw.js");
 
 if (jaTemSessao()) {
   window.location.href = "pages/principal.html";

@@ -1,6 +1,7 @@
 import { NAIPES } from "./naipes.js";
 import { CATEGORIAS } from "./categorias.js";
 import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
+import { registrarServiceWorker } from "./sw-registro.js";
 
 const USER_KEY = "ofipCvsUsuario";
 const THEME_KEY = "ofipCvsTema";
@@ -73,13 +74,20 @@ function limparSenha() {
   localStorage.removeItem(SENHA_KEY);
 }
 
+function atualizarCorStatus(tema) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = tema === "dark" ? "#833700" : "#EF6400";
+}
+
 function initTheme() {
   const saved = localStorage.getItem(THEME_KEY) || "light";
   document.documentElement.dataset.theme = saved;
+  atualizarCorStatus(saved);
   document.getElementById("theme-toggle").addEventListener("click", () => {
     const atual = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = atual;
     localStorage.setItem(THEME_KEY, atual);
+    atualizarCorStatus(atual);
   });
 }
 
@@ -403,3 +411,4 @@ initListaBotoes();
 initTutorial();
 initSenha();
 initFormulario();
+registrarServiceWorker("../sw.js");
