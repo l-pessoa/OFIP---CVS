@@ -2,7 +2,7 @@ import { listarHinos, API_BASE } from "./api.js";
 import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVORITOS, ICONE_ESTRELA } from "./categorias.js";
 import { ICONES_NAIPE_CORAL } from "./naipes.js";
 import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
-import { convidarInstalar } from "./instalar.js";
+import { convidarInstalar, inicializarBotaoMenuInstalar } from "./instalar.js";
 import { registrarServiceWorker } from "./sw-registro.js";
 
 const USER_KEY = "ofipCvsUsuario";
@@ -98,6 +98,8 @@ function initMenu() {
   document.getElementById("menu-tutorial").addEventListener("click", () => {
     iniciarTutorial(TUTORIAL_CATALOGO_KEY, PASSOS_TUTORIAL_CATALOGO);
   });
+
+  inicializarBotaoMenuInstalar(document.getElementById("menu-instalar"));
 }
 
 function getFavoritoIds() {

@@ -10,6 +10,15 @@ let promptEvento = null;
 window.addEventListener("beforeinstallprompt", (evento) => {
   evento.preventDefault();
   promptEvento = evento;
+  document.dispatchEvent(new Event("pwa-instalavel"));
+});
+
+// Dispara quando o Android instala de fato (ex: pelo prompt nativo do
+// Chrome, fora do nosso botão). É o gatilho pra sumir o item do menu sem
+// precisar esperar a pessoa recarregar a página.
+window.addEventListener("appinstalled", () => {
+  promptEvento = null;
+  document.dispatchEvent(new Event("pwa-instalado"));
 });
 
 function jaInstalado() {
@@ -23,16 +32,18 @@ function ehIOS() {
   return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
 }
 
-export function convidarInstalar() {
-  if (jaInstalado()) return;
-  if (localStorage.getItem(CONVITE_KEY) === "1") return;
-  if (!promptEvento && !ehIOS()) return;
+function podeInstalar() {
+  return !jaInstalado() && (promptEvento !== null || ehIOS());
+}
 
+// permanente=true: veio de um clique explícito no menu, não marca o
+// convite automático como "já visto" (são coisas independentes).
+function criarBanner(permanente) {
   const banner = document.createElement("div");
   banner.className = "instalar-banner";
 
   function fechar() {
-    localStorage.setItem(CONVITE_KEY, "1");
+    if (!permanente) localStorage.setItem(CONVITE_KEY, "1");
     banner.remove();
   }
 
@@ -64,4 +75,24 @@ export function convidarInstalar() {
   }
 
   document.body.appendChild(banner);
+}
+
+export function convidarInstalar() {
+  if (localStorage.getItem(CONVITE_KEY) === "1") return;
+  if (!podeInstalar()) return;
+  criarBanner(false);
+}
+
+// Liga o item "Instalar app" do menu: só aparece se ainda faz sentido
+// instalar, e some sozinho assim que a pessoa instala (Android) ou quando
+// a página percebe que já está rodando em modo standalone.
+export function inicializarBotaoMenuInstalar(botao) {
+  function atualizar() {
+    botao.hidden = !podeInstalar();
+  }
+  atualizar();
+  document.addEventListener("pwa-instalavel", atualizar);
+  document.addEventListener("pwa-instalado", atualizar);
+
+  botao.addEventListener("click", () => criarBanner(true));
 }

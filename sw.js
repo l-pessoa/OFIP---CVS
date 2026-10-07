@@ -19,7 +19,7 @@
 // esquecer de bumpar essa versão aqui, o aviso de "tem versão nova"
 // nunca aparece — quem já instalou fica preso na versão antiga pra
 // sempre. Bumpar esse número a cada push que mexe em algo do shell.
-const VERSAO_SHELL = "ofip-cvs-shell-v2";
+const VERSAO_SHELL = "ofip-cvs-shell-v3";
 const CACHE_DADOS = "ofip-cvs-dados";
 const CACHE_ARQUIVOS = "ofip-cvs-arquivos";
 
