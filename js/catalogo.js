@@ -3,6 +3,7 @@ import { CATEGORIAS, COR_CATEGORIA_PADRAO, MOTIVO_PADRAO, SILHUETA_PADRAO, FAVOR
 import { ICONES_NAIPE_CORAL } from "./naipes.js";
 import { iniciarTutorial, tutorialVisto } from "./tutorial.js";
 import { convidarInstalar, inicializarBotaoMenuInstalar } from "./instalar.js";
+import { inicializarBotaoNotificacoes } from "./notificacoes.js";
 import { registrarServiceWorker } from "./sw-registro.js";
 
 const USER_KEY = "ofipCvsUsuario";
@@ -101,6 +102,7 @@ function initMenu() {
   });
 
   inicializarBotaoMenuInstalar(document.getElementById("menu-instalar"));
+  inicializarBotaoNotificacoes(document.getElementById("menu-notificacoes"));
 }
 
 function getFavoritoIds() {
