@@ -32,6 +32,16 @@ function ehIOS() {
   return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
 }
 
+// No iPhone a barra do Safari (com o botão Compartilhar) fica embaixo; no
+// iPad fica em cima. Usado só pra decidir pra qual lado a seta aponta.
+function ehIPad() {
+  return /ipad/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function svgSetaBaixo() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+}
+
 function podeInstalar() {
   return !jaInstalado() && (promptEvento !== null || ehIOS());
 }
@@ -42,15 +52,21 @@ function criarBanner(permanente) {
   const banner = document.createElement("div");
   banner.className = "instalar-banner";
 
+  let elementosGuia = [];
   function fechar() {
     if (!permanente) localStorage.setItem(CONVITE_KEY, "1");
     banner.remove();
+    elementosGuia.forEach((el) => el.remove());
   }
 
   if (promptEvento) {
+    // Instalação de verdade (vira um app separado, com ícone próprio e
+    // sem a barra do navegador) — por isso o título diz "Instalar", igual
+    // ao botão do menu, e não "adicionar" (que é outra coisa: um atalho
+    // que ainda abre dentro do navegador).
     banner.innerHTML = `
-      <p class="instalar-titulo">Adiciona na tela inicial</p>
-      <p class="instalar-texto">Acesso mais rápido, sem precisar abrir o navegador toda vez.</p>
+      <p class="instalar-titulo">Instalar o app</p>
+      <p class="instalar-texto">Vira um app de verdade na sua tela inicial, sem a barra do navegador e sem precisar abrir o Chrome toda vez.</p>
       <div class="instalar-acoes">
         <button type="button" class="instalar-agora-nao">Agora não</button>
         <button type="button" class="instalar-btn">Instalar</button>
@@ -64,6 +80,11 @@ function criarBanner(permanente) {
       evento.prompt();
     });
   } else {
+    // A Apple não deixa nenhum site disparar a instalação por código — só
+    // dá pra indicar onde a pessoa precisa tocar. O Compartilhar fica na
+    // barra do Safari, embaixo no iPhone e em cima no iPad, então a seta
+    // escurece o resto da tela e aponta pro lado certo, como um tutorial.
+    const paraCima = ehIPad();
     banner.innerHTML = `
       <p class="instalar-titulo">Adiciona na tela inicial</p>
       <p class="instalar-texto">Toque em <strong>Compartilhar</strong> (o quadrado com a seta pra cima) e depois em <strong>"Adicionar à Tela de Início"</strong> pra ter acesso rápido.</p>
@@ -72,6 +93,19 @@ function criarBanner(permanente) {
       </div>
     `;
     banner.querySelector(".instalar-btn").addEventListener("click", fechar);
+
+    const fundo = document.createElement("div");
+    fundo.className = "instalar-guia-fundo";
+    fundo.addEventListener("click", fechar);
+
+    const seta = document.createElement("div");
+    seta.className = `instalar-guia-seta ${paraCima ? "instalar-guia-seta--cima" : "instalar-guia-seta--baixo"}`;
+    seta.setAttribute("aria-hidden", "true");
+    seta.innerHTML = svgSetaBaixo();
+
+    elementosGuia = [fundo, seta];
+    document.body.appendChild(fundo);
+    document.body.appendChild(seta);
   }
 
   document.body.appendChild(banner);
