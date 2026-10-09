@@ -1,0 +1,13 @@
+/* Ajustes da página de Maestros só pra tablet (768px pra cima). Mesma
+   lógica do css/catalogo-tablet.css: carregado com media="(min-width:
+   768px)" no <link>, então nunca chega a valer pro celular.
+
+   A tela de Maestros foi pensada pro celular (.admin-conteudo com
+   max-width:560px) — no tablet isso sobra espaço grande nas duas
+   laterais. Aqui só alarga essa coluna; o grid de naipes (.naipes-grid)
+   já é auto-fill, então ganha mais colunas sozinho conforme a coluna
+   fica mais larga, sem precisar mexer nele. */
+
+.admin-conteudo {
+  max-width: 760px;
+}

@@ -198,6 +198,19 @@ function initSenha() {
     salvarSenha(senha);
     carregarLista();
   });
+
+  const campoSenha = document.getElementById("senha-admin");
+  const btnVerSenha = document.getElementById("btn-ver-senha");
+  const olhoAberto = btnVerSenha.querySelector(".icone-olho-aberto");
+  const olhoFechado = btnVerSenha.querySelector(".icone-olho-fechado");
+  btnVerSenha.addEventListener("click", () => {
+    const vaiMostrar = campoSenha.type === "password";
+    campoSenha.type = vaiMostrar ? "text" : "password";
+    olhoAberto.style.display = vaiMostrar ? "none" : "";
+    olhoFechado.style.display = vaiMostrar ? "" : "none";
+    btnVerSenha.setAttribute("aria-label", vaiMostrar ? "Esconder senha" : "Mostrar senha");
+    btnVerSenha.setAttribute("aria-pressed", String(vaiMostrar));
+  });
 }
 
 async function carregarLista() {

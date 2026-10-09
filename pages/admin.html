@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/catalogo.css" />
   <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/admin-tablet.css" media="(min-width: 768px)" />
   <link rel="manifest" href="../manifest.json" />
   <link rel="icon" href="../assets/icons/app/favicon-32.png" sizes="32x32" type="image/png" />
   <link rel="icon" href="../assets/icons/app/favicon-16.png" sizes="16x16" type="image/png" />
@@ -42,7 +43,13 @@
     <section id="tela-senha" class="admin-card">
       <h1 class="admin-titulo">Esse acesso é restrito a maestros</h1>
       <label for="senha-admin" class="sr-only">Senha</label>
-      <input type="password" id="senha-admin" placeholder="Senha" autocomplete="off" />
+      <div class="campo-senha">
+        <input type="password" id="senha-admin" placeholder="Senha" autocomplete="off" />
+        <button type="button" id="btn-ver-senha" class="btn-ver-senha" aria-label="Mostrar senha" aria-pressed="false">
+          <svg class="icone-olho-aberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icone-olho-fechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.3 21.3 0 015.06-5.94M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a21.3 21.3 0 01-2.68 3.8M14.12 14.12a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
       <button type="button" id="btn-entrar" class="admin-btn">Entrar</button>
       <p class="admin-erro" id="senha-erro" hidden>Senha incorreta.</p>
     </section>
