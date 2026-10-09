@@ -413,10 +413,19 @@ function initVisualizador() {
   // mas o canvas já desenhado continua com a largura antiga até alguém
   // mandar recalcular — é isso que fazia a folha ficar do mesmo tamanho
   // de antes, só com os botões escondidos, em vez de usar o espaço novo.
+  //
+  // Em tela cheia, além da largura, também força a altura a preencher a
+  // tela toda — pedido explícito: a proporção da página raramente bate
+  // exatamente com a proporção da tela (celular principalmente), então
+  // só ajustar a largura sempre deixa uma sobra embaixo. Estica mesmo,
+  // mudando um pouco a proporção da partitura, pra não sobrar nada.
   function reescalarPaginas() {
+    const emTelaCheia = modal.classList.contains("tela-cheia");
     const larguraAlvo = larguraDisponivel();
+    const alturaAlvo = emTelaCheia ? paginas.clientHeight : null;
     paginas.querySelectorAll(".visualizador-pagina").forEach((canvas) => {
       canvas.style.width = `${larguraAlvo}px`;
+      canvas.style.height = alturaAlvo ? `${alturaAlvo}px` : "";
     });
   }
 

@@ -876,10 +876,18 @@
 
 /* Tela cheia de verdade: a folha vai de ponta a ponta, sem respiro nem
    cantinho arredondado/sombra (isso só faz sentido como "cartão" dentro
-   do respiro — sem respiro, vira só uma borda estranha). */
+   do respiro — sem respiro, vira só uma borda estranha). Esconde também
+   a barrinha de rolagem (ela reserva uma faixa de espaço de verdade em
+   telas sem rolagem "flutuante", tipo desktop/alguns tablets) — a
+   rolagem continua funcionando normal, só não ocupa espaço visível. */
 .visualizador-modal.tela-cheia .visualizador-paginas {
   gap: 0;
   padding: 0;
+  scrollbar-width: none;
+}
+
+.visualizador-modal.tela-cheia .visualizador-paginas::-webkit-scrollbar {
+  display: none;
 }
 
 .visualizador-pagina {
