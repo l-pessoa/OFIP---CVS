@@ -1,0 +1,62 @@
+/* Ajustes do catálogo só pra tablet (768px pra cima). Fica num arquivo à
+   parte — carregado com media="(min-width: 768px)" no <link> — pra nunca
+   vazar pro celular sem querer: abaixo de 768px o navegador nem chega a
+   baixar/aplicar esse CSS.
+
+   Contexto do que corrige: .categoria-nav, .catalogo-busca e
+   .catalogo-pauta são barras com cor de fundo própria (a barra de abas,
+   a faixa de busca, a cena da categoria). Antes existia uma regra que
+   limitava a LARGURA DELAS MESMAS a 720px centralizados — isso encolhia
+   a barra inteira, cor de fundo junto, deixando o creme da página
+   aparecer como uma sobra branca nas duas laterais (bem visível no
+   tablet deitado, onde a tela é bem mais larga). A barra tem que ir até
+   a borda; só o conteúdo de dentro dela é que fica numa coluna
+   confortável. */
+
+.categoria-nav {
+  justify-content: center;
+}
+
+.catalogo-header-top {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Lista de hinos: continua em coluna única (pedido explícito — nada de
+   grid/múltiplas colunas), só mais larga que no celular pra aproveitar
+   melhor a tela. */
+#hino-lista {
+  max-width: 960px;
+}
+
+/* Desenhos e ícones da cena da categoria, proporcionais à tela maior —
+   no celular eles já ficam no tamanho certo pra aquela tela; aqui só
+   aumenta pra não ficar pequeno demais numa tela de tablet. */
+.catalogo-pauta.tem-cena {
+  height: 170px;
+}
+
+.cena-icone {
+  width: 86px;
+  height: 86px;
+}
+
+.cena-icone-eco {
+  width: 16px;
+  height: 16px;
+}
+
+.cena-icone-mini {
+  width: 30px;
+  height: 30px;
+}
+
+.cena-nome {
+  font-size: 40px;
+}
+
+.categoria-marca-dagua {
+  width: 210px;
+  height: 210px;
+}
