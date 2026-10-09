@@ -400,12 +400,38 @@ function initVisualizador() {
   let wakeLock = null;
   let blobUrlAtual = null;
 
+  // Largura real disponível pra partitura dentro do container — lê o
+  // padding de verdade em vez de descontar um número fixo, porque em
+  // tela cheia o padding vira 0 (ver catalogo.css) e isso muda sozinho.
+  function larguraDisponivel() {
+    const estilo = getComputedStyle(paginas);
+    const padding = parseFloat(estilo.paddingLeft) + parseFloat(estilo.paddingRight);
+    return paginas.clientWidth - padding;
+  }
+
+  // Ao entrar/sair da tela cheia o padding ao redor da partitura muda,
+  // mas o canvas já desenhado continua com a largura antiga até alguém
+  // mandar recalcular — é isso que fazia a folha ficar do mesmo tamanho
+  // de antes, só com os botões escondidos, em vez de usar o espaço novo.
+  function reescalarPaginas() {
+    const larguraAlvo = larguraDisponivel();
+    paginas.querySelectorAll(".visualizador-pagina").forEach((canvas) => {
+      canvas.style.width = `${larguraAlvo}px`;
+    });
+  }
+
   btnTelaCheia.addEventListener("click", () => {
     modal.classList.add("tela-cheia");
+    reescalarPaginas();
   });
 
   paginas.addEventListener("click", () => {
     modal.classList.remove("tela-cheia");
+    reescalarPaginas();
+  });
+
+  window.addEventListener("resize", () => {
+    if (!modal.hidden) reescalarPaginas();
   });
 
   btnImprimir.addEventListener("click", () => window.print());
@@ -504,7 +530,7 @@ function initVisualizador() {
       const pdfjsLib = await carregarPdfJs();
       const documento = await pdfjsLib.getDocument({ data: bytes }).promise;
       paginas.innerHTML = "";
-      const larguraAlvo = paginas.clientWidth - 24;
+      const larguraAlvo = larguraDisponivel();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       for (let i = 1; i <= documento.numPages; i++) {
         const pagina = await documento.getPage(i);

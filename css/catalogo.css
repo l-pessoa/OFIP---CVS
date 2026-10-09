@@ -874,11 +874,24 @@
   background: var(--bg);
 }
 
+/* Tela cheia de verdade: a folha vai de ponta a ponta, sem respiro nem
+   cantinho arredondado/sombra (isso só faz sentido como "cartão" dentro
+   do respiro — sem respiro, vira só uma borda estranha). */
+.visualizador-modal.tela-cheia .visualizador-paginas {
+  gap: 0;
+  padding: 0;
+}
+
 .visualizador-pagina {
   max-width: 100%;
   height: auto;
   border-radius: 2px;
   box-shadow: 0 2px 14px rgba(0, 0, 0, .35);
+}
+
+.visualizador-modal.tela-cheia .visualizador-pagina {
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .visualizador-carregando {

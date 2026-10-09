@@ -24,7 +24,7 @@ importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 // esquecer de bumpar essa versão aqui, o aviso de "tem versão nova"
 // nunca aparece — quem já instalou fica preso na versão antiga pra
 // sempre. Bumpar esse número a cada push que mexe em algo do shell.
-const VERSAO_SHELL = "ofip-cvs-shell-v11";
+const VERSAO_SHELL = "ofip-cvs-shell-v12";
 const CACHE_DADOS = "ofip-cvs-dados";
 const CACHE_ARQUIVOS = "ofip-cvs-arquivos";
 
